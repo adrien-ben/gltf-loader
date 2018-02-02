@@ -5,23 +5,6 @@ import java.io.File
 
 typealias Extensions = Map<Any, Any>
 
-// Component types constants
-const val BYTE = 5120
-const val UNSIGNED_BYTE = 5121
-const val SHORT = 5122
-const val UNSIGNED_SHORT = 5123
-const val UNSIGNED_INT = 5125
-const val FLOAT = 5126
-
-// Types constants
-const val SCALAR = "SCALAR"
-const val VEC2 = "VEC2"
-const val VEC3 = "VEC3"
-const val VEC4 = "VEC4"
-const val MAT2 = "MAT2"
-const val MAT3 = "MAT3"
-const val MAT4 = "MAT4"
-
 class AccessorRaw(
         val bufferView: Int? = null,
         val byteOffset: Int = 0,
