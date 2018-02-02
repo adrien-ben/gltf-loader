@@ -39,4 +39,7 @@ publishing {
             from project.components.java
         }
     }
+    repositories {
+        mavenLocal()
+    }
 }
