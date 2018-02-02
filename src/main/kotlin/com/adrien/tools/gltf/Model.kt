@@ -243,7 +243,7 @@ class Material(
         val normalTexture: NormalTextureInfo? = null,
         val occlusionTexture: OcclusionTextureInfo? = null,
         val emissiveTexture: TextureInfo? = null,
-        val emissiveFactor: Vec3f = Vec3f(),
+        val emissiveFactor: Color = Color(0f, 0f, 0f, 1f),
         val alphaMode: AlphaMode = AlphaMode.OPAQUE,
         val alphaCutoff: Float = 0.5f,
         val doubleSided: Boolean = false,
@@ -256,7 +256,7 @@ class Material(
 class Primitive(
         val attributes: Map<String, Accessor>,
         val indices: Accessor? = null,
-        val material: Material = Material(),
+        val material: Material,
         val mode: PrimitiveMode = PrimitiveMode.TRIANGLES,
         val targets: List<Map<String, Int>>? = null
 )
@@ -268,4 +268,15 @@ class Mesh(
         val primitives: List<Primitive>,
         val weights: List<Float>? = null,
         val name: String? = null
+)
+
+class GltfAsset(
+        val buffers: List<Buffer>,
+        val bufferViews: List<BufferView>,
+        val accessors: List<Accessor>,
+        val samplers: List<Sampler>,
+        val images: List<Image>,
+        val textures: List<Texture>,
+        val materials: List<Material>,
+        val meshes: List<Mesh>
 )
