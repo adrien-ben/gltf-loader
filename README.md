@@ -10,12 +10,30 @@ The project uses [Klaxon](https://github.com/cbeust/klaxon) to parse JSON.
 
 ## Usage
 
+There are two way to load a .gltf file :
+
 ```kotlin
-val asset = GltfAssetRaw.fromGltfFile("assets/Box/Box.gltf")
+val rawAsset = GltfAssetRaw.fromGltfFile("assets/Box/Box.gltf")
 ```
+
+`GltfAssetRaw` hold a raw representation of the .glsl json file and a map of `ByteArray` indexed by their uri.
+
+```kotlin
+val asset = GltfAsset.fromGltfFile("assets/BoxInterleaved/Box.gltf")
+```
+
+`GltfAsset` is a higher level representation of the data. It is very close to `GltfAssetRaw` except objects 
+hold actual references to other objects rather than the indices of these object in an centralized array.
+Attributes with a defined range of allowed values are replaced by enums holding the original constant values.
+
+```kotlin
+val componentTypeConstantValue = ComponentType.FLOAT.code // 5126 
+```
+
+For now `GltfAsset` only hold data required for static mesh rendering. Sparse accessor are not supported either.   
 
 ## Todos
 
 * Loading .glb file
-* Higher level representation of the data
+* Finish implementing `GltfAsset`
 

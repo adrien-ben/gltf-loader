@@ -279,4 +279,23 @@ class GltfAsset(
         val textures: List<Texture>,
         val materials: List<Material>,
         val meshes: List<Mesh>
-)
+) {
+    companion object Factory {
+
+        /**
+         * Load a gltf asset model from the gltf json file [path]
+         */
+        fun fromGltfFile(path: String): GltfAsset? {
+            val gltfModel = GltfRaw.fromGltfFile(path) ?: return null
+            return GltfMapper().map(gltfModel)
+        }
+
+        /**
+         * Load a gltf asset from the glb file [path]
+         */
+        fun fromGlbFile(path: String): GltfAsset? {
+            throw NotImplementedError("Loading .glb files is not yet supported")
+        }
+
+    }
+}
