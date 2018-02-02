@@ -1,5 +1,7 @@
 package com.adrien.tools.gltf
 
+import java.nio.ByteBuffer
+
 /**
  * Component types with their byte size and their original constant value.
  */
@@ -85,9 +87,67 @@ enum class MimeType(val value: String) {
     PNG("image/png")
 }
 
+/**
+ * 3-float vector.
+ */
 class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f)
 
+/**
+ * RGBA color.
+ */
 class Color(val r: Float = 1f, val g: Float = 1f, val b: Float = 1f, val a: Float = 1f)
+
+/**
+ * Pointer to byte buffer. [uri] can reference an external file, in that case
+ * it will contain the path of the file relative the current .glsl file. It can
+ * also reference embedded base64 data.
+ */
+class Buffer(
+        val uri: String? = null,
+        val byteLength: Int,
+        val data: ByteBuffer,
+        val name: String? = null
+)
+
+/**
+ * View of a buffer. It can represent the full buffer or just a part of it.
+ */
+class BufferView(
+        val buffer: Buffer,
+        val byteOffset: Int = 0,
+        val byteLength: Int,
+        val byteStride: Int? = null,
+        val target: BufferTarget? = null,
+        val name: String? = null
+)
+
+/**
+ * Indices of the elements of a sparse buffer that must be replaced.
+ */
+class Indices(
+        val bufferView: BufferView,
+        val byteOffset: Int = 0,
+        val componentType: ComponentType
+)
+
+/**
+ * Replacement value for sparse buffer.
+ */
+class Values(
+        val bufferView: BufferView,
+        val byteOffset: Int = 0
+)
+
+/**
+ * Sparse provide information on how to generate sparse data of a buffer.
+ * [indices] contains the indices of the sparse elements and [values] the
+ * values to use.
+ */
+class Sparse(
+        val count: Int,
+        val indices: Indices,
+        val values: Values
+)
 
 /**
  * Accessor provides type information about the data contained in a
@@ -108,89 +168,44 @@ class Accessor(
 )
 
 /**
- * Sparse provide information on how to generate sparse data of a buffer.
- * [indices] contains the indices of the sparse elements and [values] the
- * values to use.
+ * Texture sampler information. Contains info on filtering and wrapping
+ * mode of the texture.
  */
-class Sparse(
-        val count: Int,
-        val indices: Indices,
-        val values: Values
+class Sampler(
+        val magFilter: Filter? = null,
+        val minFilter: Filter? = null,
+        val wrapS: WrapMode = WrapMode.REPEAT,
+        val wrapT: WrapMode = WrapMode.REPEAT,
+        val name: String? = null
 )
 
 /**
- * Indices of the elements of a sparse buffer that must be replaced.
+ * Image descriptor. [uri] can reference an external file, in that case
+ * it will contain the path of the file relative the current .glsl file.
+ * If [bufferView] is present use it instead of the uri.
  */
-class Indices(
-        val bufferView: BufferView,
-        val byteOffset: Int = 0,
-        val componentType: ComponentType
-)
-
-/**
- * Replacement value for sparse buffer.
- */
-class Values(
-        val bufferView: Int,
-        val byteOffset: Int = 0
-)
-
-/**
- * Pointer to byte buffer. [uri] can reference an external file, in that case
- * it will contain the path of the file relative the current .glsl file. It can
- * also reference embedded base64 data.
- */
-class Buffer(
+class Image(
         val uri: String? = null,
-        val byteLength: Int,
+        val mimeType: MimeType? = null,
+        val bufferView: BufferView? = null,
         val name: String? = null
 )
 
 /**
- * View of a buffer. It can represent the full buffer or just a part of it.
+ * Texture data.
  */
-class BufferView(
-        val buffer: Buffer,
-        val byteOffset: Int = 0,
-        val byteLength: Int,
-        val byteStride: Int? = null,
-        val target: BufferTarget? = null,
+class Texture(
+        val sampler: Sampler? = null,
+        val source: Image? = null,
         val name: String? = null
 )
 
 /**
- * A set of primitives to render.
+ * Texture info.
  */
-class Mesh(
-        val primitives: List<Primitive>,
-        val weights: List<Float>? = null,
-        val name: String? = null
-)
-
-/**
- * Geometry to render.
- */
-class Primitive(
-        val attributes: Map<String, Accessor>,
-        val indices: Accessor? = null,
-        val material: Material = Material(),
-        val mode: PrimitiveMode = PrimitiveMode.TRIANGLES,
-        val targets: List<Map<String, Int>>? = null
-)
-
-/**
- * Material defines the appearance of a primitive.
- */
-class Material(
-        val pbrMetallicRoughness: PbrMetallicRoughness = PbrMetallicRoughness(),
-        val normalTexture: NormalTextureInfo? = null,
-        val occlusionTexture: OcclusionTextureInfo? = null,
-        val emissiveTexture: TextureInfo? = null,
-        val emissiveFactor: Vec3f = Vec3f(),
-        val alphaMode: AlphaMode = AlphaMode.OPAQUE,
-        val alphaCutoff: Float = 0.5f,
-        val doubleSided: Boolean = false,
-        val name: String? = null
+class TextureInfo(
+        val texture: Texture,
+        val texCoord: Int = 0
 )
 
 /**
@@ -223,42 +238,36 @@ class PbrMetallicRoughness(
 )
 
 /**
- * Texture info.
+ * Material defines the appearance of a primitive.
  */
-class TextureInfo(
-        val texture: Texture,
-        val texCoord: Int = 0
-)
-
-/**
- * Texture data.
- */
-class Texture(
-        val sampler: Sampler? = null,
-        val source: Image? = null,
+class Material(
+        val pbrMetallicRoughness: PbrMetallicRoughness = PbrMetallicRoughness(),
+        val normalTexture: NormalTextureInfo? = null,
+        val occlusionTexture: OcclusionTextureInfo? = null,
+        val emissiveTexture: TextureInfo? = null,
+        val emissiveFactor: Vec3f = Vec3f(),
+        val alphaMode: AlphaMode = AlphaMode.OPAQUE,
+        val alphaCutoff: Float = 0.5f,
+        val doubleSided: Boolean = false,
         val name: String? = null
 )
 
 /**
- * Texture sampler information. Contains info on filtering and wrapping
- * mode of the texture.
+ * Geometry to render.
  */
-class Sampler(
-        val magFilter: Filter? = null,
-        val minFilter: Filter? = null,
-        val wrapS: WrapMode = WrapMode.REPEAT,
-        val wrapT: WrapMode = WrapMode.REPEAT,
-        val name: String? = null
+class Primitive(
+        val attributes: Map<String, Accessor>,
+        val indices: Accessor? = null,
+        val material: Material = Material(),
+        val mode: PrimitiveMode = PrimitiveMode.TRIANGLES,
+        val targets: List<Map<String, Int>>? = null
 )
 
 /**
- * Image descriptor. [uri] can reference an external file, in that case
- * it will contain the path of the file relative the current .glsl file.
- * If [bufferView] is present use it instead of the uri.
+ * A set of primitives to render.
  */
-class Image(
-        val uri: String? = null,
-        val mimeType: MimeType? = null,
-        val bufferView: BufferView? = null,
+class Mesh(
+        val primitives: List<Primitive>,
+        val weights: List<Float>? = null,
         val name: String? = null
 )
