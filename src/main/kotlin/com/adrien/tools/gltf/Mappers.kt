@@ -196,10 +196,7 @@ class GltfMapper : Mapper<GltfRaw, GltfAsset> {
     }
 
     private fun mapAccessor(accessorRaw: AccessorRaw): Accessor {
-        val bufferViewId = accessorRaw.bufferView ?: throw UnsupportedOperationException(
-                "Sparse accessor not implemented")
-
-        val bufferView = bufferViews[bufferViewId]
+        val bufferView = accessorRaw.bufferView?.let(bufferViews::get)
         val componentType = ComponentTypeMapper.map(accessorRaw.componentType)
         val type = TypeMapper.map(accessorRaw.type)
         val max = accessorRaw.max?.map(Number::toFloat)?.toList()
