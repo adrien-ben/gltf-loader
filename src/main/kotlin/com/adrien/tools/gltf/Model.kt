@@ -28,10 +28,10 @@ enum class Type(val componentCount: Int, val code: String) {
 /**
  * Alpha rendering mode.
  */
-enum class AlphaMode {
-    OPAQUE,
-    MASK,
-    BLEND
+enum class AlphaMode(val code: String) {
+    OPAQUE("OPAQUE"),
+    MASK("MASK"),
+    BLEND("BLEND")
 }
 
 /**
@@ -59,9 +59,7 @@ enum class WrapMode(val code: Int) {
 /**
  * GPU buffer binding target.
  */
-enum
-
-class BufferTarget(val code: Int) {
+enum class BufferTarget(val code: Int) {
     ARRAY_BUFFER(34962),
     ELEMENT_ARRAY_BUFFER(34963)
 }
