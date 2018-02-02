@@ -1,7 +1,5 @@
 package com.adrien.tools.gltf
 
-import java.nio.ByteBuffer
-
 /**
  * Component types with their byte size and their original constant value.
  */
@@ -105,7 +103,7 @@ class Color(val r: Float = 1f, val g: Float = 1f, val b: Float = 1f, val a: Floa
 class Buffer(
         val uri: String? = null,
         val byteLength: Int,
-        val data: ByteBuffer,
+        val data: ByteArray,
         val name: String? = null
 )
 
