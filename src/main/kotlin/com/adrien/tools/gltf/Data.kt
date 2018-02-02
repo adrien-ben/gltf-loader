@@ -1,6 +1,5 @@
 package com.adrien.tools.gltf
 
-import com.beust.klaxon.Json
 import com.beust.klaxon.Klaxon
 import java.io.File
 
@@ -288,34 +287,32 @@ class GltfAssetRaw(
         val skins: List<SkinRaw>? = null,
         val textures: List<TextureRaw>? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null,
+        val extras: Any? = null
+)
 
-        @Json(ignored = true)
-        var data: Array<ByteArray>? = null
-) {
+class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val dataByURI: Map<String, ByteArray>?) {
     companion object Factory {
 
         /**
-         * Load a gltf asset from the gltf json file [path]
+         * Load a gltf asset from the gltf json file [path] and load external buffers
          */
-        fun fromGltfFile(path: String): GltfAssetRaw? {
+        fun fromGltfFile(path: String): GltfRaw? {
             val file = File(path)
-            val asset = Klaxon().parse<GltfAssetRaw>(file)
-            asset?.data = loadBuffers(asset, file.parent)
-            return asset
+            val gltfAssetRaw = Klaxon().parse<GltfAssetRaw>(file) ?: return null
+
+            val dataToURI = HashMap<String, ByteArray>()
+            gltfAssetRaw.buffers
+                    ?.mapNotNull { it.uri }
+                    ?.forEach { dataToURI[it] = File(file.parent, it).readBytes() }
+
+            return GltfRaw(gltfAssetRaw, dataToURI)
         }
 
         /**
          * Load a gltf asset from the glb file [path]
          */
-        fun fromGlbFile(path: String): GltfAssetRaw? {
+        fun fromGlbFile(path: String): GltfRaw? {
             throw NotImplementedError("Loading .glb files is not yet supported")
         }
-
-        private fun loadBuffers(asset: GltfAssetRaw?, directory: String) = asset
-                ?.buffers
-                ?.map { it.uri }
-                ?.map { File(directory, it).readBytes() }
-                ?.toTypedArray()
     }
 }
