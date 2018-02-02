@@ -30,7 +30,7 @@ Attributes with a defined range of allowed values are replaced by enums holding 
 val componentTypeConstantValue = ComponentType.FLOAT.code // 5126 
 ```
 
-For now `GltfAsset` only hold data required for static mesh rendering. Sparse accessor are not supported either.   
+For now `GltfAsset` only hold data required for static mesh rendering.
 
 ## Todos
 
