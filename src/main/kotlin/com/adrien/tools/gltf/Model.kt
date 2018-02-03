@@ -193,7 +193,7 @@ class Image(
  * Texture data.
  */
 class Texture(
-        val sampler: Sampler? = null,
+        val sampler: Sampler,
         val source: Image? = null,
         val name: String? = null
 )

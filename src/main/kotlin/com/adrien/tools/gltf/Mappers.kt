@@ -222,7 +222,7 @@ class GltfMapper : Mapper<GltfRaw, GltfAsset> {
     }
 
     private fun mapTexture(textureRaw: TextureRaw): Texture {
-        val sampler = textureRaw.sampler?.let(samplers::get)
+        val sampler = textureRaw.sampler?.let(samplers::get) ?: Sampler()
         val image = textureRaw.source?.let(images::get)
         return Texture(sampler, image, textureRaw.name)
     }
