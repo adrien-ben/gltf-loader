@@ -1,5 +1,7 @@
 package com.adrien.tools.gltf
 
+import com.beust.klaxon.Converter
+import com.beust.klaxon.JsonValue
 import com.beust.klaxon.Klaxon
 import java.io.File
 
@@ -190,10 +192,15 @@ class PrimitiveRaw(
         val indices: Int? = null,
         val material: Int? = null,
         val mode: Int = 4,
-        val targets: List<Map<String, Int>>? = null,
+        val targets: List<MorphTargetRaw>? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
+
+/**
+ * TODO: Remove this when Klaxon can deserialize nested collections
+ */
+class MorphTargetRaw(map: MutableMap<String, Int>) : HashMap<String, Int>(map)
 
 class NodeRaw(
         val camera: Int? = null,
@@ -273,6 +280,27 @@ class GltfAssetRaw(
         val extras: Any? = null
 )
 
+/**
+ * Custom converter for [MorphTargetRaw]
+ *
+ * TODO: Remove this when Klaxon can deserialize nested collections
+ *
+ */
+private val morphTargetConverter = object : Converter<MorphTargetRaw> {
+    override fun fromJson(jv: JsonValue): MorphTargetRaw {
+        val map = HashMap<String, Int>()
+        jv.obj?.mapValuesTo(map) { (_, value) -> value as Int }
+        return MorphTargetRaw(map)
+    }
+
+    /**
+     * To implement when (if?) gltf exports are supported by the library
+     */
+    override fun toJson(value: MorphTargetRaw): String? {
+        throw NotImplementedError("Morph target serialization not implemented")
+    }
+}
+
 class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val dataByURI: Map<String, ByteArray>?) {
     companion object Factory {
 
@@ -281,7 +309,9 @@ class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val dataByURI: Map<String, ByteArr
          */
         fun fromGltfFile(path: String): GltfRaw? {
             val file = File(path)
-            val gltfAssetRaw = Klaxon().parse<GltfAssetRaw>(file) ?: return null
+            val gltfAssetRaw = Klaxon()
+                    .converter(morphTargetConverter)
+                    .parse<GltfAssetRaw>(file) ?: return null
 
             val dataToURI = HashMap<String, ByteArray>()
             gltfAssetRaw.buffers
