@@ -91,6 +91,20 @@ enum class MimeType(val value: String) {
 class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f)
 
 /**
+ * Float quaternion.
+ */
+class Quaternionf(val i: Float = 0f, val j: Float = 0f, val k: Float = 0f, val a: Float = 1f)
+
+/**
+ * 4x4-float matrix
+ */
+class Mat4f(
+        val m00: Float = 1f, val m01: Float = 0f, val m02: Float = 0f, val m03: Float = 0f, // first column
+        val m10: Float = 0f, val m11: Float = 1f, val m12: Float = 0f, val m13: Float = 0f, // second column
+        val m20: Float = 0f, val m21: Float = 0f, val m22: Float = 1f, val m23: Float = 0f, // third column
+        val m30: Float = 0f, val m31: Float = 0f, val m32: Float = 0f, val m33: Float = 1f) // fourth column
+
+/**
  * RGBA color.
  */
 class Color(val r: Float = 1f, val g: Float = 1f, val b: Float = 1f, val a: Float = 1f)
@@ -258,7 +272,7 @@ class Primitive(
         val indices: Accessor? = null,
         val material: Material,
         val mode: PrimitiveMode = PrimitiveMode.TRIANGLES,
-        val targets: List<Map<String, Int>>? = null
+        val targets: List<Map<String, Accessor>>? = null
 )
 
 /**
@@ -270,7 +284,26 @@ class Mesh(
         val name: String? = null
 )
 
+/**
+ * A node of a scene.
+ */
+class Node(
+        // TODO: add camera, skin and weights
+        val children: List<Node>?,
+        val matrix: Mat4f,
+        val mesh: Mesh?,
+        val rotation: Quaternionf,
+        val scale: Vec3f,
+        val translation: Vec3f,
+        val name: String?
+)
+
+/**
+ * Gltf asset
+ */
 class GltfAsset(
+        val extensionsUsed: List<String>? = null,
+        val extensionsRequired: List<String>? = null,
         val buffers: List<Buffer>,
         val bufferViews: List<BufferView>,
         val accessors: List<Accessor>,

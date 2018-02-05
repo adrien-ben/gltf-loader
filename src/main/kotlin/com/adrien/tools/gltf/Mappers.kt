@@ -3,14 +3,14 @@ package com.adrien.tools.gltf
 /**
  * Mappers common interface.
  */
-interface Mapper<in I, out O> {
+private interface Mapper<in I, out O> {
     fun map(input: I): O
 }
 
 /**
  * [ComponentType] mapper.
  */
-object ComponentTypeMapper : Mapper<Int, ComponentType?> {
+private object ComponentTypeMapper : Mapper<Int, ComponentType?> {
     override fun map(input: Int) = when (input) {
         ComponentType.BYTE.code -> ComponentType.BYTE
         ComponentType.UNSIGNED_BYTE.code -> ComponentType.UNSIGNED_BYTE
@@ -25,7 +25,7 @@ object ComponentTypeMapper : Mapper<Int, ComponentType?> {
 /**
  * [Type] mapper.
  */
-object TypeMapper : Mapper<String, Type> {
+private object TypeMapper : Mapper<String, Type> {
     override fun map(input: String) = when (input) {
         Type.SCALAR.code -> Type.SCALAR
         Type.VEC2.code -> Type.VEC2
@@ -41,7 +41,7 @@ object TypeMapper : Mapper<String, Type> {
 /**
  * [AlphaMode] mapper.
  */
-object AlphaModeMapper : Mapper<String, AlphaMode> {
+private object AlphaModeMapper : Mapper<String, AlphaMode> {
     override fun map(input: String) = when (input) {
         AlphaMode.OPAQUE.code -> AlphaMode.OPAQUE
         AlphaMode.MASK.code -> AlphaMode.MASK
@@ -53,7 +53,7 @@ object AlphaModeMapper : Mapper<String, AlphaMode> {
 /**
  * [Filter] mapper.
  */
-object FilterMapper : Mapper<Int, Filter> {
+private object FilterMapper : Mapper<Int, Filter> {
     override fun map(input: Int) = when (input) {
         Filter.NEAREST.code -> Filter.NEAREST
         Filter.LINEAR.code -> Filter.LINEAR
@@ -68,7 +68,7 @@ object FilterMapper : Mapper<Int, Filter> {
 /**
  * [WrapMode] mapper.
  */
-object WrapModeMapper : Mapper<Int, WrapMode> {
+private object WrapModeMapper : Mapper<Int, WrapMode> {
     override fun map(input: Int) = when (input) {
         WrapMode.CLAMP_TO_EDGE.code -> WrapMode.CLAMP_TO_EDGE
         WrapMode.MIRRORED_REPEAT.code -> WrapMode.MIRRORED_REPEAT
@@ -80,7 +80,7 @@ object WrapModeMapper : Mapper<Int, WrapMode> {
 /**
  * [BufferTarget] mapper.
  */
-object BufferTargetMapper : Mapper<Int, BufferTarget> {
+private object BufferTargetMapper : Mapper<Int, BufferTarget> {
     override fun map(input: Int) = when (input) {
         BufferTarget.ARRAY_BUFFER.code -> BufferTarget.ARRAY_BUFFER
         BufferTarget.ELEMENT_ARRAY_BUFFER.code -> BufferTarget.ELEMENT_ARRAY_BUFFER
@@ -91,7 +91,7 @@ object BufferTargetMapper : Mapper<Int, BufferTarget> {
 /**
  * [PrimitiveMode] mapper.
  */
-object PrimitiveModeMapper : Mapper<Int, PrimitiveMode> {
+private object PrimitiveModeMapper : Mapper<Int, PrimitiveMode> {
     override fun map(input: Int) = when (input) {
         PrimitiveMode.POINTS.code -> PrimitiveMode.POINTS
         PrimitiveMode.LINES.code -> PrimitiveMode.LINES
@@ -107,7 +107,7 @@ object PrimitiveModeMapper : Mapper<Int, PrimitiveMode> {
 /**
  * [MimeType] mapper.
  */
-object MimeTypeMapper : Mapper<String, MimeType> {
+private object MimeTypeMapper : Mapper<String, MimeType> {
     override fun map(input: String) = when (input) {
         MimeType.JPEG.value -> MimeType.JPEG
         MimeType.PNG.value -> MimeType.PNG
@@ -118,7 +118,7 @@ object MimeTypeMapper : Mapper<String, MimeType> {
 /**
  * [Vec3f] mapper.
  */
-object Vec3fMapper : Mapper<List<Number>, Vec3f> {
+private object Vec3fMapper : Mapper<List<Number>, Vec3f> {
     override fun map(input: List<Number>): Vec3f {
         if (input.size != 3) throw IllegalArgumentException("A list must contain 3 elements to be mapped into a Vec3f")
         return Vec3f(input[0].toFloat(), input[1].toFloat(), input[2].toFloat())
@@ -126,9 +126,33 @@ object Vec3fMapper : Mapper<List<Number>, Vec3f> {
 }
 
 /**
+ * [Quaternionf] mapper.
+ */
+private object QuaternionfMapper : Mapper<List<Number>, Quaternionf> {
+    override fun map(input: List<Number>): Quaternionf {
+        if (input.size != 4) throw IllegalArgumentException("A list must contain 4 elements to be mapped into a Quaternionf")
+        return Quaternionf(input[0].toFloat(), input[1].toFloat(), input[2].toFloat(), input[3].toFloat())
+    }
+}
+
+/**
+ * [Mat4f] mapper.
+ */
+private object Mat4fMapper : Mapper<List<Number>, Mat4f> {
+    override fun map(input: List<Number>): Mat4f {
+        if (input.size != 16) throw IllegalArgumentException("A list must contain 16 elements to be mapped into a Mat4f")
+        return Mat4f(
+                input[0].toFloat(), input[1].toFloat(), input[2].toFloat(), input[3].toFloat(),
+                input[4].toFloat(), input[5].toFloat(), input[6].toFloat(), input[7].toFloat(),
+                input[8].toFloat(), input[9].toFloat(), input[10].toFloat(), input[11].toFloat(),
+                input[12].toFloat(), input[13].toFloat(), input[14].toFloat(), input[15].toFloat())
+    }
+}
+
+/**
  * [Color] mapper.
  */
-object ColorMapper : Mapper<List<Number>, Color> {
+private object ColorMapper : Mapper<List<Number>, Color> {
     override fun map(input: List<Number>): Color {
         if (input.size !in 3..4) throw IllegalArgumentException("A list must contain 3 or 4 elements to be mapped into a Color")
         val alpha = if (input.size == 3) 1f else input[3].toFloat()
@@ -160,7 +184,17 @@ class GltfMapper : Mapper<GltfRaw, GltfAsset> {
         materials = input.gltfAssetRaw.materials?.map(::mapMaterial) ?: emptyList()
         meshes = input.gltfAssetRaw.meshes?.map(::mapMesh) ?: emptyList()
 
-        return GltfAsset(buffers, bufferViews, accessors, samplers, images, textures, materials, meshes)
+        return GltfAsset(
+                input.gltfAssetRaw.extensionsUsed?.toList(),
+                input.gltfAssetRaw.extensionsRequired?.toList(),
+                buffers,
+                bufferViews,
+                accessors,
+                samplers,
+                images,
+                textures,
+                materials,
+                meshes)
     }
 
     private fun mapBuffer(bufferRaw: BufferRaw, gltfRaw: GltfRaw): Buffer {
@@ -271,9 +305,10 @@ class GltfMapper : Mapper<GltfRaw, GltfAsset> {
         val indices = primitiveRaw.indices?.let(accessors::get)
         val material = primitiveRaw.material?.let(materials::get) ?: Material()
         val mode = PrimitiveModeMapper.map(primitiveRaw.mode)
-
-        // TODO: handle morph targets
-        return Primitive(attributes, indices, material, mode, null)
+        val targets = primitiveRaw.targets?.map {
+            it.mapValues { (_, accessorId) -> accessors[accessorId] }
+        }
+        return Primitive(attributes, indices, material, mode, targets)
     }
 
     private fun mapMesh(meshRaw: MeshRaw): Mesh {
