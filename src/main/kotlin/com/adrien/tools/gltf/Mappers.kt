@@ -1,5 +1,7 @@
 package com.adrien.tools.gltf
 
+import java.util.*
+
 /**
  * Mappers common interface.
  */
@@ -259,10 +261,18 @@ internal class GltfMapper : Mapper<GltfRaw, GltfAsset> {
     )
 
     private fun mapBuffer(index: Int, bufferRaw: BufferRaw, gltfRaw: GltfRaw): Buffer {
-        if (gltfRaw.dataByURI == null) throw UnsupportedOperationException("Cannot map a buffer with no uri")
-        val data = gltfRaw.dataByURI[bufferRaw.uri] ?: throw IllegalStateException(
-                "No data found for buffer ${bufferRaw.uri}")
-        return Buffer(index, bufferRaw.uri, bufferRaw.byteLength, data, bufferRaw.name)
+        val uri = bufferRaw.uri
+
+        val data = if (uri != null && DATA_URI_REGEX.matches(uri)) {
+            val base64data = DATA_URI_REGEX.find(uri)!!.groupValues[1]
+            Base64.getDecoder().decode(base64data)
+        } else if (uri != null && gltfRaw.dataByURI != null) {
+            gltfRaw.dataByURI[uri] ?: throw IllegalStateException("No data found for buffer $uri")
+        } else {
+            throw IllegalArgumentException("Buffer data is not embedded and does not reference a .bin file that could be found")
+        }
+
+        return Buffer(index, uri, bufferRaw.byteLength, data, bufferRaw.name)
     }
 
     private fun mapBufferView(index: Int, bufferViewRaw: BufferViewRaw) = BufferView(

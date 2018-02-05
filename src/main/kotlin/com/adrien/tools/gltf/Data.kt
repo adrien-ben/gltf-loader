@@ -7,6 +7,8 @@ import java.io.File
 
 internal typealias Extensions = Map<Any, Any>
 
+internal val DATA_URI_REGEX = Regex("data:.*(?:;base64)?,(.*)")
+
 internal class AccessorRaw(
         val bufferView: Int? = null,
         val byteOffset: Int = 0,
@@ -301,7 +303,11 @@ private val morphTargetConverter = object : Converter<MorphTargetRaw> {
     }
 }
 
-internal class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val dataByURI: Map<String, ByteArray>?) {
+internal class GltfRaw(
+        val gltfAssetRaw: GltfAssetRaw,
+        val dataByURI: Map<String, ByteArray>?
+) {
+
     companion object Factory {
 
         /**

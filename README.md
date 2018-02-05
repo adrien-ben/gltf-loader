@@ -11,7 +11,7 @@ The project uses [Klaxon](https://github.com/cbeust/klaxon) to parse JSON.
 ## Usage
 
 ```kotlin
-val asset = GltfAsset.fromFile("assets/BoxInterleaved/Box.gltf")
+val asset = GltfAsset.fromFile("pathTo/asset.gltf")
 ```
 
 `GltfAsset` is a higher level representation of the data present in the json file. The main difference is that
@@ -30,5 +30,4 @@ val componentTypeConstantValue = ComponentType.FLOAT.code // 5126
 ## Todos
 
 * Loading .glb file
-* Handle embedded base64 buffers
-
+* Post loading validation
