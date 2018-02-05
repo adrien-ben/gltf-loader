@@ -5,9 +5,9 @@ import com.beust.klaxon.JsonValue
 import com.beust.klaxon.Klaxon
 import java.io.File
 
-typealias Extensions = Map<Any, Any>
+internal typealias Extensions = Map<Any, Any>
 
-class AccessorRaw(
+internal class AccessorRaw(
         val bufferView: Int? = null,
         val byteOffset: Int = 0,
         val componentType: Int,
@@ -22,7 +22,7 @@ class AccessorRaw(
         val extras: Any? = null
 )
 
-class SparseRaw(
+internal class SparseRaw(
         val count: Int,
         val indices: IndicesRaw,
         val values: ValuesRaw,
@@ -30,7 +30,7 @@ class SparseRaw(
         val extras: Any? = null
 )
 
-class IndicesRaw(
+internal class IndicesRaw(
         val bufferView: Int,
         val byteOffset: Int = 0,
         val componentType: Int,
@@ -38,14 +38,14 @@ class IndicesRaw(
         val extras: Any? = null
 )
 
-class ValuesRaw(
+internal class ValuesRaw(
         val bufferView: Int,
         val byteOffset: Int = 0,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
 
-class AnimationRaw(
+internal class AnimationRaw(
         val channels: List<ChannelRaw>,
         val samplers: List<AnimationSamplerRaw>,
         val name: String? = null,
@@ -53,21 +53,21 @@ class AnimationRaw(
         val extras: Any? = null
 )
 
-class ChannelRaw(
+internal class ChannelRaw(
         val sampler: Int,
-        val target: TargetRaw,
+        val target: AnimationTargetRaw,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
 
-class TargetRaw(
+internal class AnimationTargetRaw(
         val node: Int? = null,
         val path: String,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
 
-class AnimationSamplerRaw(
+internal class AnimationSamplerRaw(
         val input: Int,
         val interpolation: String = "LINEAR",
         val output: Int,
@@ -75,7 +75,7 @@ class AnimationSamplerRaw(
         val extras: Any? = null
 )
 
-class AssetRaw(
+internal class AssetRaw(
         val copyright: String? = null,
         val generator: String? = null,
         val version: String,
@@ -84,7 +84,7 @@ class AssetRaw(
         val extras: Any? = null
 )
 
-class BufferRaw(
+internal class BufferRaw(
         val uri: String? = null,
         val byteLength: Int,
         val name: String? = null,
@@ -92,7 +92,7 @@ class BufferRaw(
         val extras: Any? = null
 )
 
-class BufferViewRaw(
+internal class BufferViewRaw(
         val buffer: Int,
         val byteOffset: Int = 0,
         val byteLength: Int,
@@ -103,7 +103,7 @@ class BufferViewRaw(
         val extras: Any? = null
 )
 
-class CameraRaw(
+internal class CameraRaw(
         val orthographic: OrthographicRaw? = null,
         val perspective: PerspectiveRaw? = null,
         val type: String,
@@ -112,7 +112,7 @@ class CameraRaw(
         val extras: Any? = null
 )
 
-class OrthographicRaw(
+internal class OrthographicRaw(
         val xmag: Number,
         val ymag: Number,
         val zfar: Number,
@@ -121,7 +121,7 @@ class OrthographicRaw(
         val extras: Any? = null
 )
 
-class PerspectiveRaw(
+internal class PerspectiveRaw(
         val aspectRatio: Number? = null,
         val yfov: Number,
         val zfar: Number? = null,
@@ -130,7 +130,7 @@ class PerspectiveRaw(
         val extras: Any? = null
 )
 
-class ImageRaw(
+internal class ImageRaw(
         val uri: String? = null,
         val mimeType: String? = null,
         val bufferView: Int? = null,
@@ -139,7 +139,7 @@ class ImageRaw(
         val extras: Any? = null
 )
 
-class MaterialRaw(
+internal class MaterialRaw(
         val name: String? = null,
         val pbrMetallicRoughness: PbrMetallicRoughnessRaw = PbrMetallicRoughnessRaw(),
         val normalTexture: NormalTextureInfoRaw? = null,
@@ -153,7 +153,7 @@ class MaterialRaw(
         val extras: Any? = null
 )
 
-class NormalTextureInfoRaw(
+internal class NormalTextureInfoRaw(
         val index: Int,
         val texCoord: Int = 0,
         val scale: Number = 1f,
@@ -161,7 +161,7 @@ class NormalTextureInfoRaw(
         val extras: Any? = null
 )
 
-class OcclusionTextureInfoRaw(
+internal class OcclusionTextureInfoRaw(
         val index: Int,
         val texCoord: Int = 0,
         val strength: Number = 1f,
@@ -169,7 +169,7 @@ class OcclusionTextureInfoRaw(
         val extras: Any? = null
 )
 
-class PbrMetallicRoughnessRaw(
+internal class PbrMetallicRoughnessRaw(
         val baseColorFactor: List<Number> = listOf(1f, 1f, 1f, 1f),
         val baseColorTexture: TextureInfoRaw? = null,
         val metallicFactor: Number = 1f,
@@ -179,7 +179,7 @@ class PbrMetallicRoughnessRaw(
         val extras: Any? = null
 )
 
-class MeshRaw(
+internal class MeshRaw(
         val primitives: List<PrimitiveRaw>,
         val weights: List<Number>? = null,
         val name: String? = null,
@@ -187,7 +187,7 @@ class MeshRaw(
         val extras: Any? = null
 )
 
-class PrimitiveRaw(
+internal class PrimitiveRaw(
         val attributes: Map<String, Int>,
         val indices: Int? = null,
         val material: Int? = null,
@@ -200,9 +200,9 @@ class PrimitiveRaw(
 /**
  * TODO: Remove this when Klaxon can deserialize nested collections
  */
-class MorphTargetRaw(map: MutableMap<String, Int>) : HashMap<String, Int>(map)
+internal class MorphTargetRaw(map: MutableMap<String, Int>) : HashMap<String, Int>(map)
 
-class NodeRaw(
+internal class NodeRaw(
         val camera: Int? = null,
         val children: List<Int>? = null,
         val skin: Int? = null,
@@ -217,7 +217,7 @@ class NodeRaw(
         val extras: Any? = null
 )
 
-class SamplerRaw(
+internal class SamplerRaw(
         val magFilter: Int? = null,
         val minFilter: Int? = null,
         val wrapS: Int = 10497,
@@ -227,14 +227,14 @@ class SamplerRaw(
         val extras: Any? = null
 )
 
-class SceneRaw(
+internal class SceneRaw(
         val nodes: List<Int>? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
 
-class SkinRaw(
+internal class SkinRaw(
         val inverseBindMatrices: Int? = null,
         val skeleton: Int? = null,
         val joints: List<Int>,
@@ -243,7 +243,7 @@ class SkinRaw(
         val extras: Any? = null
 )
 
-class TextureRaw(
+internal class TextureRaw(
         val sampler: Int? = null,
         val source: Int? = null,
         val name: String? = null,
@@ -251,14 +251,14 @@ class TextureRaw(
         val extras: Any? = null
 )
 
-class TextureInfoRaw(
+internal class TextureInfoRaw(
         val index: Int,
         val texCoord: Int = 0,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
 
-class GltfAssetRaw(
+internal class GltfAssetRaw(
         val extensionsUsed: List<String>? = null,
         val extensionsRequired: List<String>? = null,
         val accessors: List<AccessorRaw>? = null,
@@ -301,13 +301,13 @@ private val morphTargetConverter = object : Converter<MorphTargetRaw> {
     }
 }
 
-class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val dataByURI: Map<String, ByteArray>?) {
+internal class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val dataByURI: Map<String, ByteArray>?) {
     companion object Factory {
 
         /**
          * Load a gltf asset from the gltf json file [path] and load external buffers
          */
-        fun fromGltfFile(path: String): GltfRaw? {
+        fun fromFile(path: String): GltfRaw? {
             val file = File(path)
             val gltfAssetRaw = Klaxon()
                     .converter(morphTargetConverter)
@@ -319,13 +319,6 @@ class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val dataByURI: Map<String, ByteArr
                     ?.forEach { dataToURI[it] = File(file.parent, it).readBytes() }
 
             return GltfRaw(gltfAssetRaw, dataToURI)
-        }
-
-        /**
-         * Load a gltf asset from the glb file [path]
-         */
-        fun fromGlbFile(path: String): GltfRaw? {
-            throw NotImplementedError("Loading .glb files is not yet supported")
         }
     }
 }

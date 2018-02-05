@@ -86,6 +86,33 @@ enum class MimeType(val value: String) {
 }
 
 /**
+ * Camera types.
+ */
+enum class CameraType(val value: String) {
+    ORTHOGRAPHIC("orthographic"),
+    PERSPECTIVE("perspective")
+}
+
+/**
+ * Animation target paths.
+ */
+enum class AnimationTargetPath(val value: String) {
+    TRANSLATION("translation"),
+    ROTATION("rotation"),
+    SCALE("scale"),
+    WEIGHTS("weights")
+}
+
+/**
+ * Interpolation types.
+ */
+enum class InterpolationType(val value: String) {
+    LINEAR("LINEAR"),
+    STEP("STEP"),
+    CUBICSPLINE("CUBICSPLINE")
+}
+
+/**
  * 3-float vector.
  */
 class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f)
@@ -115,6 +142,7 @@ class Color(val r: Float = 1f, val g: Float = 1f, val b: Float = 1f, val a: Floa
  * also reference embedded base64 data.
  */
 class Buffer(
+        val index: Int,
         val uri: String? = null,
         val byteLength: Int,
         val data: ByteArray,
@@ -125,6 +153,7 @@ class Buffer(
  * View of a buffer. It can represent the full buffer or just a part of it.
  */
 class BufferView(
+        val index: Int,
         val buffer: Buffer,
         val byteOffset: Int = 0,
         val byteLength: Int,
@@ -167,6 +196,7 @@ class Sparse(
  * the data must be generated from the sparse accessor.
  */
 class Accessor(
+        val index: Int,
         val bufferView: BufferView? = null,
         val byteOffset: Int = 0,
         val componentType: ComponentType,
@@ -184,6 +214,7 @@ class Accessor(
  * mode of the texture.
  */
 class Sampler(
+        val index: Int,
         val magFilter: Filter? = null,
         val minFilter: Filter? = null,
         val wrapS: WrapMode = WrapMode.REPEAT,
@@ -197,6 +228,7 @@ class Sampler(
  * If [bufferView] is present use it instead of the uri.
  */
 class Image(
+        val index: Int,
         val uri: String? = null,
         val mimeType: MimeType? = null,
         val bufferView: BufferView? = null,
@@ -207,6 +239,7 @@ class Image(
  * Texture data.
  */
 class Texture(
+        val index: Int,
         val sampler: Sampler,
         val source: Image? = null,
         val name: String? = null
@@ -253,6 +286,7 @@ class PbrMetallicRoughness(
  * Material defines the appearance of a primitive.
  */
 class Material(
+        val index: Int,
         val pbrMetallicRoughness: PbrMetallicRoughness = PbrMetallicRoughness(),
         val normalTexture: NormalTextureInfo? = null,
         val occlusionTexture: OcclusionTextureInfo? = null,
@@ -279,8 +313,40 @@ class Primitive(
  * A set of primitives to render.
  */
 class Mesh(
+        val index: Int,
         val primitives: List<Primitive>,
         val weights: List<Float>? = null,
+        val name: String? = null
+)
+
+/**
+ * Orthographic projection camera.
+ */
+class Orthographic(
+        val xMag: Float,
+        val yMag: Float,
+        val zFar: Float,
+        val zNear: Float
+)
+
+/**
+ * Perspective projection cameras.
+ */
+class Perspective(
+        val aspectRatio: Float? = null,
+        val yFov: Float,
+        val zFar: Float? = null,
+        val zNear: Float
+)
+
+/**
+ * Camera.
+ */
+class Camera(
+        val index: Int,
+        val orthographic: Orthographic? = null,
+        val perspective: Perspective? = null,
+        val type: CameraType,
         val name: String? = null
 )
 
@@ -288,20 +354,91 @@ class Mesh(
  * A node of a scene.
  */
 class Node(
-        // TODO: add camera, skin and weights
+        val index: Int,
+        val camera: Camera?,
         val children: List<Node>?,
+        skin: Skin?,
         val matrix: Mat4f,
         val mesh: Mesh?,
         val rotation: Quaternionf,
         val scale: Vec3f,
         val translation: Vec3f,
+        val weights: List<Float>?,
         val name: String?
+) {
+    var skin = skin
+        internal set
+}
+
+/**
+ * Skin.
+ */
+class Skin(
+        val index: Int,
+        val inverseBindMatrices: Accessor? = null,
+        val skeleton: Node? = null,
+        val joints: List<Node>,
+        val name: String? = null
+)
+
+/**
+ * Node/TRS target of an animation.
+ */
+class AnimationTarget(
+        val node: Node? = null,
+        val path: AnimationTargetPath
+)
+
+/**
+ * Animation sampler.
+ */
+class AnimationSampler(
+        val input: Accessor,
+        val interpolation: InterpolationType = InterpolationType.LINEAR,
+        val output: Accessor
+)
+
+/**
+ * Animation channel.
+ */
+class Channel(
+        val sampler: AnimationSampler,
+        val target: AnimationTarget
+)
+
+/**
+ * Animation.
+ */
+class Animation(
+        val channels: List<Channel>,
+        val samplers: List<AnimationSampler>,
+        val name: String? = null
+)
+
+/**
+ * A scene of an asset.
+ */
+class Scene(
+        val index: Int,
+        val nodes: List<Node>?,
+        val name: String?
+)
+
+/**
+ * Asset information.
+ */
+class Asset(
+        val copyright: String?,
+        val generator: String?,
+        val version: String,
+        val minVersion: String?
 )
 
 /**
  * Gltf asset
  */
 class GltfAsset(
+        val asset: Asset,
         val extensionsUsed: List<String>? = null,
         val extensionsRequired: List<String>? = null,
         val buffers: List<Buffer>,
@@ -311,24 +448,22 @@ class GltfAsset(
         val images: List<Image>,
         val textures: List<Texture>,
         val materials: List<Material>,
-        val meshes: List<Mesh>
+        val meshes: List<Mesh>,
+        val cameras: List<Camera>,
+        val nodes: List<Node>,
+        val skin: List<Skin>?,
+        val animations: List<Animation>,
+        val scenes: List<Scene>,
+        val scene: Scene?
 ) {
     companion object Factory {
 
         /**
          * Load a gltf asset model from the gltf json file [path]
          */
-        fun fromGltfFile(path: String): GltfAsset? {
-            val gltfModel = GltfRaw.fromGltfFile(path) ?: return null
+        fun fromFile(path: String): GltfAsset? {
+            val gltfModel = GltfRaw.fromFile(path) ?: return null
             return GltfMapper().map(gltfModel)
         }
-
-        /**
-         * Load a gltf asset from the glb file [path]
-         */
-        fun fromGlbFile(path: String): GltfAsset? {
-            throw NotImplementedError("Loading .glb files is not yet supported")
-        }
-
     }
 }

@@ -116,6 +116,42 @@ private object MimeTypeMapper : Mapper<String, MimeType> {
 }
 
 /**
+ * [CameraType] mapper.
+ */
+private object CameraTypeMapper : Mapper<String, CameraType> {
+    override fun map(input: String) = when (input) {
+        CameraType.ORTHOGRAPHIC.value -> CameraType.ORTHOGRAPHIC
+        CameraType.PERSPECTIVE.value -> CameraType.PERSPECTIVE
+        else -> throw UnsupportedOperationException("Unsupported camera type $input")
+    }
+}
+
+/**
+ * [AnimationTargetPath] mapper.
+ */
+private object AnimationTargetPathMapper : Mapper<String, AnimationTargetPath> {
+    override fun map(input: String) = when (input) {
+        AnimationTargetPath.TRANSLATION.value -> AnimationTargetPath.TRANSLATION
+        AnimationTargetPath.ROTATION.value -> AnimationTargetPath.ROTATION
+        AnimationTargetPath.SCALE.value -> AnimationTargetPath.SCALE
+        AnimationTargetPath.WEIGHTS.value -> AnimationTargetPath.WEIGHTS
+        else -> throw UnsupportedOperationException("Unsupported target path $input")
+    }
+}
+
+/**
+ * [InterpolationType] mapper.
+ */
+private object InterpolationTypeMapper : Mapper<String, InterpolationType> {
+    override fun map(input: String) = when (input) {
+        InterpolationType.LINEAR.value -> InterpolationType.LINEAR
+        InterpolationType.STEP.value -> InterpolationType.STEP
+        InterpolationType.CUBICSPLINE.value -> InterpolationType.CUBICSPLINE
+        else -> throw UnsupportedOperationException("Unsupported interpolation type $input")
+    }
+}
+
+/**
  * [Vec3f] mapper.
  */
 private object Vec3fMapper : Mapper<List<Number>, Vec3f> {
@@ -163,7 +199,7 @@ private object ColorMapper : Mapper<List<Number>, Color> {
 /**
  * [GltfAsset] mapper.
  */
-class GltfMapper : Mapper<GltfRaw, GltfAsset> {
+internal class GltfMapper : Mapper<GltfRaw, GltfAsset> {
 
     private lateinit var buffers: List<Buffer>
     private lateinit var bufferViews: List<BufferView>
@@ -173,43 +209,71 @@ class GltfMapper : Mapper<GltfRaw, GltfAsset> {
     private lateinit var textures: List<Texture>
     private lateinit var materials: List<Material>
     private lateinit var meshes: List<Mesh>
+    private lateinit var cameras: List<Camera>
+    private lateinit var nodes: List<Node>
+    private lateinit var skins: List<Skin>
 
     override fun map(input: GltfRaw): GltfAsset {
-        buffers = input.gltfAssetRaw.buffers?.map { mapBuffer(it, input) } ?: emptyList()
-        bufferViews = input.gltfAssetRaw.bufferViews?.map(::mapBufferView) ?: emptyList()
-        accessors = input.gltfAssetRaw.accessors?.map(::mapAccessor) ?: emptyList()
-        samplers = input.gltfAssetRaw.samplers?.map(::mapSampler) ?: emptyList()
-        images = input.gltfAssetRaw.images?.map(::mapImage) ?: emptyList()
-        textures = input.gltfAssetRaw.textures?.map(::mapTexture) ?: emptyList()
-        materials = input.gltfAssetRaw.materials?.map(::mapMaterial) ?: emptyList()
-        meshes = input.gltfAssetRaw.meshes?.map(::mapMesh) ?: emptyList()
+
+        val asset = input.gltfAssetRaw
+
+        buffers = asset.buffers?.mapIndexed { index, buffer -> mapBuffer(index, buffer, input) } ?: emptyList()
+        bufferViews = asset.bufferViews?.mapIndexed(::mapBufferView) ?: emptyList()
+        accessors = asset.accessors?.mapIndexed(::mapAccessor) ?: emptyList()
+        samplers = asset.samplers?.mapIndexed(::mapSampler) ?: emptyList()
+        images = asset.images?.mapIndexed(::mapImage) ?: emptyList()
+        textures = asset.textures?.mapIndexed(::mapTexture) ?: emptyList()
+        materials = asset.materials?.mapIndexed(::mapMaterial) ?: emptyList()
+        meshes = asset.meshes?.mapIndexed(::mapMesh) ?: emptyList()
+        cameras = asset.cameras?.mapIndexed(::mapCamera) ?: emptyList()
+
+        // map nodes recursively, skin are omitted
+        val tmpNode = Array<Node?>(asset.nodes?.size ?: 0) { null }
+        asset.nodes?.forEachIndexed { index, nodeRaw -> mapNodeRec(index, nodeRaw, asset, tmpNode) }
+        nodes = tmpNode.requireNoNulls().asList()
+
+        // map skins then update nodes with loaded skins
+        skins = asset.skins?.mapIndexed(::mapSkin) ?: emptyList()
+        asset.nodes?.forEachIndexed { index, nodeRaw -> nodes[index].skin = nodeRaw.skin?.let { skins[it] } }
+
+        val animations = asset.animations?.map(::mapAnimation) ?: emptyList()
+        val scenes = asset.scenes?.mapIndexed(::mapScene) ?: emptyList()
 
         return GltfAsset(
-                input.gltfAssetRaw.extensionsUsed?.toList(),
-                input.gltfAssetRaw.extensionsRequired?.toList(),
-                buffers,
-                bufferViews,
-                accessors,
-                samplers,
-                images,
-                textures,
-                materials,
-                meshes)
+                mapAsset(asset.asset),
+                asset.extensionsUsed?.toList(),
+                asset.extensionsRequired?.toList(),
+                buffers, bufferViews, accessors,
+                samplers, images, textures,
+                materials, meshes,
+                cameras,
+                nodes, skins, animations,
+                scenes, asset.scene?.let(scenes::get))
     }
 
-    private fun mapBuffer(bufferRaw: BufferRaw, gltfRaw: GltfRaw): Buffer {
+    private fun mapAsset(assetRaw: AssetRaw) = Asset(
+            assetRaw.copyright,
+            assetRaw.generator,
+            assetRaw.version,
+            assetRaw.minVersion
+    )
+
+    private fun mapBuffer(index: Int, bufferRaw: BufferRaw, gltfRaw: GltfRaw): Buffer {
         if (gltfRaw.dataByURI == null) throw UnsupportedOperationException("Cannot map a buffer with no uri")
         val data = gltfRaw.dataByURI[bufferRaw.uri] ?: throw IllegalStateException(
                 "No data found for buffer ${bufferRaw.uri}")
-        return Buffer(bufferRaw.uri, bufferRaw.byteLength, data, bufferRaw.name)
+        return Buffer(index, bufferRaw.uri, bufferRaw.byteLength, data, bufferRaw.name)
     }
 
-    private fun mapBufferView(bufferViewRaw: BufferViewRaw): BufferView {
-        val buffer = buffers[bufferViewRaw.buffer]
-        val target = bufferViewRaw.target?.let(BufferTargetMapper::map)
-        return BufferView(buffer, bufferViewRaw.byteOffset, bufferViewRaw.byteLength, bufferViewRaw.byteStride,
-                target, bufferViewRaw.name)
-    }
+    private fun mapBufferView(index: Int, bufferViewRaw: BufferViewRaw) = BufferView(
+            index,
+            buffers[bufferViewRaw.buffer],
+            bufferViewRaw.byteOffset,
+            bufferViewRaw.byteLength,
+            bufferViewRaw.byteStride,
+            bufferViewRaw.target?.let(BufferTargetMapper::map),
+            bufferViewRaw.name
+    )
 
     private fun mapIndices(indicesRaw: IndicesRaw): Indices {
         val bufferView = bufferViews[indicesRaw.bufferView]
@@ -229,37 +293,43 @@ class GltfMapper : Mapper<GltfRaw, GltfAsset> {
         return Sparse(sparseRaw.count, indices, values)
     }
 
-    private fun mapAccessor(accessorRaw: AccessorRaw): Accessor {
-        val bufferView = accessorRaw.bufferView?.let(bufferViews::get)
-        val componentType = ComponentTypeMapper.map(accessorRaw.componentType)
-        val type = TypeMapper.map(accessorRaw.type)
-        val max = accessorRaw.max?.map(Number::toFloat)?.toList()
-        val min = accessorRaw.min?.map(Number::toFloat)?.toList()
-        val sparse = accessorRaw.sparse?.let(::mapSparse)
+    private fun mapAccessor(index: Int, accessorRaw: AccessorRaw) = Accessor(
+            index,
+            accessorRaw.bufferView?.let(bufferViews::get),
+            accessorRaw.byteOffset,
+            ComponentTypeMapper.map(accessorRaw.componentType),
+            accessorRaw.normalized,
+            accessorRaw.count,
+            TypeMapper.map(accessorRaw.type),
+            accessorRaw.max?.map(Number::toFloat)?.toList(),
+            accessorRaw.min?.map(Number::toFloat)?.toList(),
+            accessorRaw.sparse?.let(::mapSparse),
+            accessorRaw.name
+    )
 
-        return Accessor(bufferView, accessorRaw.byteOffset, componentType, accessorRaw.normalized, accessorRaw.count,
-                type, max, min, sparse, accessorRaw.name)
-    }
+    private fun mapSampler(index: Int, samplerRaw: SamplerRaw) = Sampler(
+            index,
+            samplerRaw.magFilter?.let(FilterMapper::map),
+            samplerRaw.minFilter?.let(FilterMapper::map),
+            WrapModeMapper.map(samplerRaw.wrapS),
+            WrapModeMapper.map(samplerRaw.wrapT),
+            samplerRaw.name
+    )
 
-    private fun mapSampler(samplerRaw: SamplerRaw): Sampler {
-        val magFilter = samplerRaw.magFilter?.let(FilterMapper::map)
-        val minFilter = samplerRaw.minFilter?.let(FilterMapper::map)
-        val wrapS = WrapModeMapper.map(samplerRaw.wrapS)
-        val wrapT = WrapModeMapper.map(samplerRaw.wrapT)
-        return Sampler(magFilter, minFilter, wrapS, wrapT, samplerRaw.name)
-    }
+    private fun mapImage(index: Int, imageRaw: ImageRaw) = Image(
+            index,
+            imageRaw.uri,
+            imageRaw.mimeType?.let(MimeTypeMapper::map),
+            imageRaw.bufferView?.let(bufferViews::get),
+            imageRaw.name
+    )
 
-    private fun mapImage(imageRaw: ImageRaw): Image {
-        val bufferView = imageRaw.bufferView?.let(bufferViews::get)
-        val mimeType = imageRaw.mimeType?.let(MimeTypeMapper::map)
-        return Image(imageRaw.uri, mimeType, bufferView, imageRaw.name)
-    }
-
-    private fun mapTexture(textureRaw: TextureRaw): Texture {
-        val sampler = textureRaw.sampler?.let(samplers::get) ?: Sampler()
-        val image = textureRaw.source?.let(images::get)
-        return Texture(sampler, image, textureRaw.name)
-    }
+    private fun mapTexture(index: Int, textureRaw: TextureRaw) = Texture(
+            index,
+            textureRaw.sampler?.let(samplers::get) ?: Sampler(-1),
+            textureRaw.source?.let(images::get),
+            textureRaw.name
+    )
 
     private fun mapTextureInfo(textureInfoRaw: TextureInfoRaw): TextureInfo {
         val texture = textures[textureInfoRaw.index]
@@ -287,23 +357,23 @@ class GltfMapper : Mapper<GltfRaw, GltfAsset> {
         return PbrMetallicRoughness(color, colorTexture, metallic, roughness, pbrTexture)
     }
 
-    private fun mapMaterial(materialRaw: MaterialRaw): Material {
-        val pbr = mapPbrMetallicRoughness(materialRaw.pbrMetallicRoughness)
-        val normalTexture = materialRaw.normalTexture?.let(::mapNormalTextureInfo)
-        val occlusionTexture = materialRaw.occlusionTexture?.let(::mapOcclusionTextureInfo)
-        val emissiveTexture = materialRaw.emissiveTexture?.let(::mapTextureInfo)
-        val emissiveColor = ColorMapper.map(materialRaw.emissiveFactor)
-        val alphaMode = AlphaModeMapper.map(materialRaw.alphaMode)
-        val alphaCutoff = materialRaw.alphaCutoff.toFloat()
-
-        return Material(pbr, normalTexture, occlusionTexture, emissiveTexture, emissiveColor, alphaMode, alphaCutoff,
-                materialRaw.doubleSided, materialRaw.name)
-    }
+    private fun mapMaterial(index: Int, materialRaw: MaterialRaw) = Material(
+            index,
+            mapPbrMetallicRoughness(materialRaw.pbrMetallicRoughness),
+            materialRaw.normalTexture?.let(::mapNormalTextureInfo),
+            materialRaw.occlusionTexture?.let(::mapOcclusionTextureInfo),
+            materialRaw.emissiveTexture?.let(::mapTextureInfo),
+            ColorMapper.map(materialRaw.emissiveFactor),
+            AlphaModeMapper.map(materialRaw.alphaMode),
+            materialRaw.alphaCutoff.toFloat(),
+            materialRaw.doubleSided,
+            materialRaw.name
+    )
 
     private fun mapPrimitive(primitiveRaw: PrimitiveRaw): Primitive {
         val attributes = primitiveRaw.attributes.map { Pair(it.key, accessors[it.value]) }.toMap()
         val indices = primitiveRaw.indices?.let(accessors::get)
-        val material = primitiveRaw.material?.let(materials::get) ?: Material()
+        val material = primitiveRaw.material?.let(materials::get) ?: Material(-1)
         val mode = PrimitiveModeMapper.map(primitiveRaw.mode)
         val targets = primitiveRaw.targets?.map {
             it.mapValues { (_, accessorId) -> accessors[accessorId] }
@@ -311,9 +381,104 @@ class GltfMapper : Mapper<GltfRaw, GltfAsset> {
         return Primitive(attributes, indices, material, mode, targets)
     }
 
-    private fun mapMesh(meshRaw: MeshRaw): Mesh {
-        val primitives = meshRaw.primitives.map(::mapPrimitive)
-        val weights = meshRaw.weights?.map(Number::toFloat)
-        return Mesh(primitives, weights, meshRaw.name)
+    private fun mapMesh(index: Int, meshRaw: MeshRaw) = Mesh(
+            index,
+            meshRaw.primitives.map(::mapPrimitive),
+            meshRaw.weights?.map(Number::toFloat),
+            meshRaw.name
+    )
+
+    private fun mapOrthographic(orthographicRaw: OrthographicRaw) = Orthographic(
+            orthographicRaw.xmag.toFloat(),
+            orthographicRaw.ymag.toFloat(),
+            orthographicRaw.zfar.toFloat(),
+            orthographicRaw.znear.toFloat()
+    )
+
+    private fun mapPerspective(perspectiveRaw: PerspectiveRaw) = Perspective(
+            perspectiveRaw.aspectRatio?.toFloat(),
+            perspectiveRaw.yfov.toFloat(),
+            perspectiveRaw.zfar?.toFloat(),
+            perspectiveRaw.znear.toFloat()
+    )
+
+    private fun mapCamera(index: Int, cameraRaw: CameraRaw) = Camera(
+            index,
+            cameraRaw.orthographic?.let(::mapOrthographic),
+            cameraRaw.perspective?.let(::mapPerspective),
+            CameraTypeMapper.map(cameraRaw.type),
+            cameraRaw.name
+    )
+
+    /**
+     * Map a node
+     *
+     * If the node has unmapped children, it maps them first
+     */
+    private fun mapNodeRec(index: Int, nodeRaw: NodeRaw, assetRaw: GltfAssetRaw, nodes: Array<Node?>) {
+        if (nodes[index] != null) return
+
+        val shouldMapChildren = nodeRaw.children?.any { nodes[it] == null } ?: false
+        if (shouldMapChildren) {
+            nodeRaw.children
+                    ?.map { Pair(it, assetRaw.nodes?.get(it)) }
+                    ?.filter { it.second != null }
+                    ?.forEach { mapNodeRec(it.first, it.second!!, assetRaw, nodes) }
+        }
+
+        if (nodes[index] == null) nodes[index] = mapNode(index, nodeRaw, nodes)
     }
+
+    private fun mapNode(index: Int, nodeRaw: NodeRaw, nodes: Array<Node?>) = Node(
+            index,
+            nodeRaw.camera?.let(cameras::get),
+            nodeRaw.children?.map(nodes::get)?.requireNoNulls(),
+            null,
+            Mat4fMapper.map(nodeRaw.matrix),
+            nodeRaw.mesh?.let(meshes::get),
+            QuaternionfMapper.map(nodeRaw.rotation),
+            Vec3fMapper.map(nodeRaw.scale),
+            Vec3fMapper.map(nodeRaw.translation),
+            nodeRaw.weights?.map(Number::toFloat),
+            nodeRaw.name
+    )
+
+    private fun mapSkin(index: Int, skinRaw: SkinRaw) = Skin(
+            index,
+            skinRaw.inverseBindMatrices?.let(accessors::get),
+            skinRaw.skeleton?.let(nodes::get),
+            skinRaw.joints.map(nodes::get).requireNoNulls(),
+            skinRaw.name
+    )
+
+    private fun mapAnimationSampler(animationSamplerRaw: AnimationSamplerRaw) = AnimationSampler(
+            accessors[animationSamplerRaw.input],
+            InterpolationTypeMapper.map(animationSamplerRaw.interpolation),
+            accessors[animationSamplerRaw.output]
+    )
+
+    private fun mapAnimationTarget(targetRaw: AnimationTargetRaw) = AnimationTarget(
+            targetRaw.node?.let(nodes::get),
+            AnimationTargetPathMapper.map(targetRaw.path)
+    )
+
+    private fun mapChannel(channelRaw: ChannelRaw, samplers: List<AnimationSampler>) = Channel(
+            samplers[channelRaw.sampler],
+            mapAnimationTarget(channelRaw.target)
+    )
+
+    private fun mapAnimation(animationRaw: AnimationRaw): Animation {
+        val samplers = animationRaw.samplers.map(::mapAnimationSampler)
+        return Animation(
+                animationRaw.channels.map { mapChannel(it, samplers) },
+                samplers,
+                animationRaw.name
+        )
+    }
+
+    private fun mapScene(index: Int, sceneRaw: SceneRaw) = Scene(
+            index,
+            sceneRaw.nodes?.map(nodes::get),
+            sceneRaw.name
+    )
 }
