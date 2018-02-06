@@ -322,6 +322,7 @@ internal class GltfRaw(
             val dataToURI = HashMap<String, ByteArray>()
             gltfAssetRaw.buffers
                     ?.mapNotNull { it.uri }
+                    ?.filterNot(DATA_URI_REGEX::matches)
                     ?.forEach { dataToURI[it] = File(file.parent, it).readBytes() }
 
             return GltfRaw(gltfAssetRaw, dataToURI)
