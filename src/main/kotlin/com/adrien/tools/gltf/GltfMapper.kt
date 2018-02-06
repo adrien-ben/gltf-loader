@@ -44,9 +44,10 @@ internal class GltfMapper {
         cameras = asset.cameras?.mapIndexed { index, camera -> camera.map(index) } ?: emptyList()
 
         // map nodes recursively, skin are omitted
-        val tmpNode = Array<GltfNode?>(asset.nodes?.size ?: 0) { null }
-        asset.nodes?.forEachIndexed { index, nodeRaw -> nodeRaw.map(index, asset, tmpNode) }
-        nodes = tmpNode.requireNoNulls().asList()
+        nodes = Array<GltfNode?>(asset.nodes?.size ?: 0) { null }.let {
+            asset.nodes?.forEachIndexed { index, nodeRaw -> nodeRaw.map(index, asset, it) }
+            it.requireNoNulls().asList()
+        }
 
         // map skins then update nodes with loaded skins
         skins = asset.skins?.mapIndexed { index, skin -> skin.map(index) } ?: emptyList()
@@ -206,27 +207,24 @@ internal class GltfMapper {
 
         val shouldMapChildren = children?.any { nodes[it] == null } ?: false
         if (shouldMapChildren) {
-            children
-                    ?.map { Pair(it, assetRaw.nodes?.get(it)) }
-                    ?.filter { it.second != null }
-                    ?.forEach { it.second!!.map(it.first, assetRaw, nodes) }
+            children?.mapNotNull { Pair(it, assetRaw.nodes?.get(it) ?: return@mapNotNull null) }
+                    ?.forEach { (index, child) -> child.map(index, assetRaw, nodes) }
         }
 
         if (nodes[index] == null) nodes[index] = this.map(index, nodes)
     }
 
     private fun NodeRaw.map(index: Int, nodes: Array<GltfNode?>) = GltfNode(
-            index,
-            camera?.let(cameras::get),
-            children?.map(nodes::get)?.requireNoNulls(),
-            null,
-            GltfMat4.fromNumbers(matrix),
-            mesh?.let(meshes::get),
-            GltfQuaternion.fromNumbers(rotation),
-            GltfVec3.fromNumbers(scale),
-            GltfVec3.fromNumbers(translation),
-            weights?.map(Number::toFloat),
-            name
+            index = index,
+            camera = camera?.let(cameras::get),
+            children = children?.map(nodes::get)?.requireNoNulls(),
+            matrix = GltfMat4.fromNumbers(matrix),
+            mesh = mesh?.let(meshes::get),
+            rotation = GltfQuaternion.fromNumbers(rotation),
+            scale = GltfVec3.fromNumbers(scale),
+            translation = GltfVec3.fromNumbers(translation),
+            weights = weights?.map(Number::toFloat),
+            name = name
     )
 
     private fun SkinRaw.map(index: Int) = GltfSkin(

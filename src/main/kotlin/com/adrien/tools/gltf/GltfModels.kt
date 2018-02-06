@@ -305,7 +305,7 @@ class GltfNode(
         val index: Int,
         val camera: GltfCamera?,
         val children: List<GltfNode>?,
-        skin: GltfSkin?,
+        skin: GltfSkin? = null,
         val matrix: GltfMat4,
         val mesh: GltfMesh?,
         val rotation: GltfQuaternion,
