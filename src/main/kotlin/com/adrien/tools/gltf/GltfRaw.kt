@@ -7,8 +7,6 @@ import java.io.File
 
 internal typealias Extensions = Map<Any, Any>
 
-internal val DATA_URI_REGEX = Regex("data:.*(?:;base64)?,(.*)")
-
 internal class BufferRaw(
         val uri: String? = null,
         val byteLength: Int,
