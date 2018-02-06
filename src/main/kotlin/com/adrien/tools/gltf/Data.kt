@@ -305,7 +305,7 @@ private val morphTargetConverter = object : Converter<MorphTargetRaw> {
 
 internal class GltfRaw(
         val gltfAssetRaw: GltfAssetRaw,
-        val dataByURI: Map<String, ByteArray>?
+        val dataByURI: Map<String, ByteArray>
 ) {
 
     companion object Factory {

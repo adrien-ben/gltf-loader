@@ -199,6 +199,20 @@ private object ColorMapper : Mapper<List<Number>, Color> {
 }
 
 /**
+ * Decode a data URI if it matches the data uri pattern.
+ *
+ * It returns a [ByteArray] or null if the string does not match the required pattern.
+ */
+private fun String.decodeDataUri(): ByteArray? {
+    if (DATA_URI_REGEX.matches(this)) {
+        val matchResult = DATA_URI_REGEX.find(this)
+        val base64 = matchResult!!.groupValues[1]
+        return Base64.getDecoder().decode(base64)
+    }
+    return null
+}
+
+/**
  * [GltfAsset] mapper.
  */
 internal class GltfMapper : Mapper<GltfRaw, GltfAsset> {
@@ -263,14 +277,9 @@ internal class GltfMapper : Mapper<GltfRaw, GltfAsset> {
     private fun mapBuffer(index: Int, bufferRaw: BufferRaw, gltfRaw: GltfRaw): Buffer {
         val uri = bufferRaw.uri
 
-        val data = if (uri != null && DATA_URI_REGEX.matches(uri)) {
-            val base64data = DATA_URI_REGEX.find(uri)!!.groupValues[1]
-            Base64.getDecoder().decode(base64data)
-        } else if (uri != null && gltfRaw.dataByURI != null) {
-            gltfRaw.dataByURI[uri] ?: throw IllegalStateException("No data found for buffer $uri")
-        } else {
-            throw IllegalArgumentException("Buffer data is not embedded and does not reference a .bin file that could be found")
-        }
+        val data = uri?.decodeDataUri()
+                ?: gltfRaw.dataByURI[uri]
+                ?: throw IllegalArgumentException("Buffer data is not embedded and does not reference a .bin file that could be found")
 
         return Buffer(index, uri, bufferRaw.byteLength, data, bufferRaw.name)
     }
@@ -329,6 +338,7 @@ internal class GltfMapper : Mapper<GltfRaw, GltfAsset> {
     private fun mapImage(index: Int, imageRaw: ImageRaw) = Image(
             index,
             imageRaw.uri,
+            imageRaw.uri?.decodeDataUri(),
             imageRaw.mimeType?.let(MimeTypeMapper::map),
             imageRaw.bufferView?.let(bufferViews::get),
             imageRaw.name

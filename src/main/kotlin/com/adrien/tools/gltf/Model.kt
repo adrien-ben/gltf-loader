@@ -223,13 +223,18 @@ class Sampler(
 )
 
 /**
- * Image descriptor. [uri] can reference an external file, in that case
- * it will contain the path of the file relative the current .glsl file.
+ * Image descriptor.
+ *
+ * [uri] can reference an external file, in that case it will contain the path of
+ * the file relative the current .glsl file. [uri] can also contain a data uri, in
+ * this case, the uri will be decoded and its content will be stored in [data].
+ *
  * If [bufferView] is present use it instead of the uri.
  */
 class Image(
         val index: Int,
         val uri: String? = null,
+        val data: ByteArray? = null,
         val mimeType: MimeType? = null,
         val bufferView: BufferView? = null,
         val name: String? = null
