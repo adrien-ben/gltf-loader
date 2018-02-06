@@ -108,8 +108,8 @@ internal class GltfMapper {
             normalized,
             count,
             GltfType.fromCode(type),
-            max?.map(Number::toFloat)?.toList(),
-            min?.map(Number::toFloat)?.toList(),
+            max?.map(Number::toFloat),
+            min?.map(Number::toFloat),
             sparse?.map(),
             name
     )
