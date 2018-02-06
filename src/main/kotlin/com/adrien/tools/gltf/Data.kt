@@ -202,7 +202,7 @@ internal class PrimitiveRaw(
 /**
  * TODO: Remove this when Klaxon can deserialize nested collections
  */
-internal class MorphTargetRaw(map: MutableMap<String, Int>) : HashMap<String, Int>(map)
+internal class MorphTargetRaw(map: Map<String, Int>) : Map<String, Int> by map
 
 internal class NodeRaw(
         val camera: Int? = null,
