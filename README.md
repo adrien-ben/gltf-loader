@@ -19,13 +19,13 @@ same type. It makes navigation easier without loosing the benefit of having thos
 In the following example `buffer` is an object and not an index :
 
 ```kotlin
-val buffer = glb?.bufferViews?.get(0)?.buffer
+val buffer = asset.bufferViews[0].buffer
 ```
 
 But you can retrieve its index :
 
 ```kotlin
-val bufferIndex = buffer?.index
+val bufferIndex = buffer.index
 ```
 
 Attributes with a defined range of allowed values are replaced by enums holding the original constant values.
