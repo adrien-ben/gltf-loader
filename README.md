@@ -8,10 +8,7 @@ The project uses [Klaxon](https://github.com/cbeust/klaxon) to parse JSON.
 
 This library can load .gltf file and .glb files. 
 
-Buffer data is loaded (or decoded for embedded base64 buffers) so  clients don't have to. Embedded 
-base64 image data is decoded too but external image files are not loaded.
-
-The library provides  is a higher level representation of the data present in the json file. The main difference is 
+The library provides a higher level representation of the data present in the gltf files. The main difference is 
 that objects hold actual references to other objects rather than the indices of these object in an centralized array.
 Those shared objects all have an `index` field which is their position in the array centralizing the resources of the 
 same type. It makes navigation easier without loosing the benefit of having those resources centralized.
@@ -33,6 +30,9 @@ Attributes with a defined range of allowed values are replaced by enums holding 
 ```kotlin
 val componentTypeConstantValue = ComponentType.FLOAT.code // 5126 
 ```
+
+Buffer data is loaded (or decoded for embedded base64 buffers) alongside the json descriptor so clients don't have 
+to. Embedded base64 image data is decoded too but external image files are not loaded.
 
 ## Usage
 
