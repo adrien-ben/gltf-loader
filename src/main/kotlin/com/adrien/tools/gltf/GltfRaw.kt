@@ -1,11 +1,10 @@
 package com.adrien.tools.gltf
 
-import com.beust.klaxon.Converter
-import com.beust.klaxon.JsonValue
-import com.beust.klaxon.Klaxon
-import java.io.File
+import java.util.*
 
 internal typealias Extensions = Map<Any, Any>
+
+private val DATA_URI_REGEX = Regex("data:.*(?:;base64)?,(.*)")
 
 internal class BufferRaw(
         val uri: String? = null,
@@ -280,50 +279,14 @@ internal class GltfAssetRaw(
         val extras: Any? = null
 )
 
+internal class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val data: List<ByteArray>)
+
 /**
- * Custom converter for [MorphTargetRaw]
+ * String extensions to decode a data URI if it matches the data uri pattern.
  *
- * TODO: Remove this when Klaxon can deserialize nested collections
- *
+ * It returns a [ByteArray] or null if the string does not match the required pattern.
  */
-private val morphTargetConverter = object : Converter<MorphTargetRaw> {
-    override fun fromJson(jv: JsonValue): MorphTargetRaw {
-        val map = HashMap<String, Int>()
-        jv.obj?.mapValuesTo(map) { (_, value) -> value as Int }
-        return MorphTargetRaw(map)
-    }
-
-    /**
-     * To implement when (if?) gltf exports are supported by the library
-     */
-    override fun toJson(value: MorphTargetRaw): String? {
-        throw NotImplementedError("Morph target serialization not implemented")
-    }
-}
-
-internal class GltfRaw(
-        val gltfAssetRaw: GltfAssetRaw,
-        val dataByURI: Map<String, ByteArray>
-) {
-
-    companion object Factory {
-
-        /**
-         * Load a gltf asset from the gltf json file [path] and load external buffers
-         */
-        fun fromFile(path: String): GltfRaw? {
-            val file = File(path)
-            val gltfAssetRaw = Klaxon()
-                    .converter(morphTargetConverter)
-                    .parse<GltfAssetRaw>(file) ?: return null
-
-            val dataToURI = HashMap<String, ByteArray>()
-            gltfAssetRaw.buffers
-                    ?.mapNotNull { it.uri }
-                    ?.filterNot(DATA_URI_REGEX::matches)
-                    ?.forEach { dataToURI[it] = File(file.parent, it).readBytes() }
-
-            return GltfRaw(gltfAssetRaw, dataToURI)
-        }
-    }
+internal fun String.decodeDataUri(): ByteArray? {
+    val base64 = DATA_URI_REGEX.find(this)?.groupValues?.get(1) ?: return null
+    return Base64.getDecoder().decode(base64)
 }

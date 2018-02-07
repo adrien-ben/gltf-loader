@@ -4,22 +4,29 @@ Loader for [glTF2.0](https://github.com/KhronosGroup/glTF) files written in kotl
 The project uses [Klaxon](https://github.com/cbeust/klaxon) to parse JSON.
 
 
-## Features
+## What it does ?
 
-* Loading .gltf json files and .bin buffer files (v2.0 only)
+This library can load .gltf file and .glb files. 
 
-## Usage
+Buffer data is loaded (or decoded for embedded base64 buffers) so  clients don't have to. Embedded 
+base64 image data is decoded too but external image files are not loaded.
+
+The library provides  is a higher level representation of the data present in the json file. The main difference is 
+that objects hold actual references to other objects rather than the indices of these object in an centralized array.
+Those shared objects all have an `index` field which is their position in the array centralizing the resources of the 
+same type. It makes navigation easier without loosing the benefit of having those resources centralized.
+
+In the following example `buffer` is an object and not an index :
 
 ```kotlin
-val asset = GltfAsset.fromFile("pathTo/asset.gltf")
+val buffer = glb?.bufferViews?.get(0)?.buffer
 ```
 
-`GltfAsset` is a higher level representation of the data present in the json file. The main difference is that
-objects hold actual references to other objects rather than the indices of these object in an centralized array.
-Those shared objects all have an `index` field which is their position in the array centralizing the resources of
-the same type.
+But you can retrieve its index :
 
-It makes navigation easier without loosing the benefit of having those resources centralized.
+```kotlin
+val bufferIndex = buffer?.index
+```
 
 Attributes with a defined range of allowed values are replaced by enums holding the original constant values.
 
@@ -27,7 +34,17 @@ Attributes with a defined range of allowed values are replaced by enums holding 
 val componentTypeConstantValue = ComponentType.FLOAT.code // 5126 
 ```
 
+## Usage
+
+```kotlin
+val gltf = GltfAsset.fromFile("pathTo/asset.gltf")
+val glb = GltfAsset.fromFile("pathTo/asset.glb")
+```
+
+> Note that file extension is important because the library selects the proper loader implementation 
+> depending on the file extension
+
 ## Todos
 
-* Loading .glb file
 * Post loading validation
+* Extensions support (pbrSpecularGlossiness)

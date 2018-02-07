@@ -1,17 +1,5 @@
 package com.adrien.tools.gltf
 
-import java.util.*
-
-/**
- * String extensions to decode a data URI if it matches the data uri pattern.
- *
- * It returns a [ByteArray] or null if the string does not match the required pattern.
- */
-private fun String.decodeDataUri(): ByteArray? {
-    val base64 = DATA_URI_REGEX.find(this)?.groupValues?.get(1) ?: return null
-    return Base64.getDecoder().decode(base64)
-}
-
 /**
  * [GltfAsset] mapper.
  */
@@ -73,11 +61,7 @@ internal class GltfMapper {
     )
 
     private fun BufferRaw.map(index: Int, gltfRaw: GltfRaw): GltfBuffer {
-        val data = uri?.decodeDataUri()
-                ?: gltfRaw.dataByURI[uri]
-                ?: throw IllegalArgumentException("Buffer data is not embedded and does not reference a .bin file that could be found")
-
-        return GltfBuffer(index, uri, byteLength, data, name)
+        return GltfBuffer(index, uri, byteLength, gltfRaw.data[index], name)
     }
 
     private fun BufferViewRaw.map(index: Int) = GltfBufferView(
