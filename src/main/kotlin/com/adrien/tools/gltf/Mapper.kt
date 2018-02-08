@@ -3,7 +3,7 @@ package com.adrien.tools.gltf
 /**
  * [GltfAsset] mapper.
  */
-internal class GltfMapper {
+internal class Mapper {
 
     private lateinit var buffers: List<GltfBuffer>
     private lateinit var bufferViews: List<GltfBufferView>
@@ -244,6 +244,6 @@ internal class GltfMapper {
     }
 
     private fun SceneRaw.map(index: Int) = GltfScene(
-            index, nodes?.map(this@GltfMapper.nodes::get), name
+            index, nodes?.map(this@Mapper.nodes::get), name
     )
 }

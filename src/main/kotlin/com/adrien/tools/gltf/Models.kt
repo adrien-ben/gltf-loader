@@ -351,7 +351,7 @@ class GltfAsset(
          */
         fun fromFile(path: String): GltfAsset? {
             val gltfModel = Loader().load(path) ?: return null
-            return GltfMapper().map(gltfModel)
+            return Mapper().map(gltfModel)
         }
     }
 }
