@@ -16,7 +16,7 @@ internal class BufferRaw(
 
 internal class BufferViewRaw(
         val buffer: Int,
-        val byteOffset: Int = 0,
+        val byteOffset: Int? = null,
         val byteLength: Int,
         val byteStride: Int? = null,
         val target: Int? = null,
@@ -27,7 +27,7 @@ internal class BufferViewRaw(
 
 internal class IndicesRaw(
         val bufferView: Int,
-        val byteOffset: Int = 0,
+        val byteOffset: Int? = null,
         val componentType: Int,
         val extensions: Extensions? = null,
         val extras: Any? = null
@@ -35,7 +35,7 @@ internal class IndicesRaw(
 
 internal class ValuesRaw(
         val bufferView: Int,
-        val byteOffset: Int = 0,
+        val byteOffset: Int? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
@@ -50,9 +50,9 @@ internal class SparseRaw(
 
 internal class AccessorRaw(
         val bufferView: Int? = null,
-        val byteOffset: Int = 0,
+        val byteOffset: Int? = null,
         val componentType: Int,
-        val normalized: Boolean = false,
+        val normalized: Boolean? = null,
         val count: Int,
         val type: String,
         val max: List<Number>? = null,
@@ -66,8 +66,8 @@ internal class AccessorRaw(
 internal class SamplerRaw(
         val magFilter: Int? = null,
         val minFilter: Int? = null,
-        val wrapS: Int = 10497,
-        val wrapT: Int = 10497,
+        val wrapS: Int? = null,
+        val wrapT: Int? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
@@ -92,32 +92,32 @@ internal class TextureRaw(
 
 internal class TextureInfoRaw(
         val index: Int,
-        val texCoord: Int = 0,
+        val texCoord: Int? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
 
 internal class NormalTextureInfoRaw(
         val index: Int,
-        val texCoord: Int = 0,
-        val scale: Number = 1f,
+        val texCoord: Int? = null,
+        val scale: Number? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
 
 internal class OcclusionTextureInfoRaw(
         val index: Int,
-        val texCoord: Int = 0,
-        val strength: Number = 1f,
+        val texCoord: Int? = null,
+        val strength: Number? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
 
 internal class PbrMetallicRoughnessRaw(
-        val baseColorFactor: List<Number> = listOf(1f, 1f, 1f, 1f),
+        val baseColorFactor: List<Number>? = null,
         val baseColorTexture: TextureInfoRaw? = null,
-        val metallicFactor: Number = 1f,
-        val roughnessFactor: Number = 1f,
+        val metallicFactor: Number? = null,
+        val roughnessFactor: Number? = null,
         val metallicRoughnessTexture: TextureInfoRaw? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
@@ -125,14 +125,14 @@ internal class PbrMetallicRoughnessRaw(
 
 internal class MaterialRaw(
         val name: String? = null,
-        val pbrMetallicRoughness: PbrMetallicRoughnessRaw = PbrMetallicRoughnessRaw(),
+        val pbrMetallicRoughness: PbrMetallicRoughnessRaw? = null,
         val normalTexture: NormalTextureInfoRaw? = null,
         val occlusionTexture: OcclusionTextureInfoRaw? = null,
         val emissiveTexture: TextureInfoRaw? = null,
-        val emissiveFactor: List<Number> = listOf(0f, 0f, 0f),
-        val alphaMode: String = "OPAQUE",
-        val alphaCutoff: Number = 0.5f,
-        val doubleSided: Boolean = false,
+        val emissiveFactor: List<Number>? = null,
+        val alphaMode: String? = null,
+        val alphaCutoff: Number? = null,
+        val doubleSided: Boolean? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
 )
@@ -146,7 +146,7 @@ internal class PrimitiveRaw(
         val attributes: Map<String, Int>,
         val indices: Int? = null,
         val material: Int? = null,
-        val mode: Int = 4,
+        val mode: Int? = null,
         val targets: List<MorphTargetRaw>? = null,
         val extensions: Extensions? = null,
         val extras: Any? = null
@@ -191,11 +191,11 @@ internal class NodeRaw(
         val camera: Int? = null,
         val children: List<Int>? = null,
         val skin: Int? = null,
-        val matrix: List<Number> = listOf(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f),
+        val matrix: List<Number>? = null,
         val mesh: Int? = null,
-        val rotation: List<Number> = listOf(0f, 0f, 0f, 1f),
-        val scale: List<Number> = listOf(1f, 1f, 1f),
-        val translation: List<Number> = listOf(0f, 0f, 0f),
+        val rotation: List<Number>? = null,
+        val scale: List<Number>? = null,
+        val translation: List<Number>? = null,
         val weights: List<Number>? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
@@ -220,7 +220,7 @@ internal class AnimationTargetRaw(
 
 internal class AnimationSamplerRaw(
         val input: Int,
-        val interpolation: String = "LINEAR",
+        val interpolation: String?,
         val output: Int,
         val extensions: Extensions? = null,
         val extras: Any? = null

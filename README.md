@@ -44,6 +44,13 @@ val glb = GltfAsset.fromFile("pathTo/asset.glb")
 > Note that file extension is important because the library selects the proper loader implementation 
 > depending on the file extension
 
+## Nodes' Transforms
+
+In gltf files, as stated in [gltf's specification](https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#nodes-and-hierarchy) 
+: *any node can define a local space transformation either by supplying a  matrix property, or any of translation, rotation, and scale properties*. 
+When a node contains a matrix, **gltf-loader** will automatically extract the translation, scale and rotation properties even if their are not defined
+in the original file.
+
 ## Todos
 
 * Post loading validation

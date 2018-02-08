@@ -67,7 +67,7 @@ internal class GltfMapper {
     private fun BufferViewRaw.map(index: Int) = GltfBufferView(
             index,
             buffers[buffer],
-            byteOffset,
+            byteOffset ?: 0,
             byteLength,
             byteStride,
             target?.let(GltfBufferTarget.Factory::fromCode),
@@ -76,20 +76,20 @@ internal class GltfMapper {
 
     private fun IndicesRaw.map() = GltfIndices(
             bufferViews[bufferView],
-            byteOffset,
+            byteOffset ?: 0,
             GltfComponentType.fromCode(componentType)
     )
 
-    private fun ValuesRaw.map() = GltfValues(bufferViews[bufferView], byteOffset)
+    private fun ValuesRaw.map() = GltfValues(bufferViews[bufferView], byteOffset ?: 0)
 
     private fun SparseRaw.map() = GltfSparse(count, indices.map(), values.map())
 
     private fun AccessorRaw.map(index: Int) = GltfAccessor(
             index,
             bufferView?.let(bufferViews::get),
-            byteOffset,
+            byteOffset ?: 0,
             GltfComponentType.fromCode(componentType),
-            normalized,
+            normalized ?: false,
             count,
             GltfType.fromCode(type),
             max?.map(Number::toFloat),
@@ -102,8 +102,8 @@ internal class GltfMapper {
             index,
             magFilter?.let(GltfFilter.Factory::fromCode),
             minFilter?.let(GltfFilter.Factory::fromCode),
-            GltfWrapMode.fromCode(wrapS),
-            GltfWrapMode.fromCode(wrapT),
+            wrapS?.let(GltfWrapMode.Factory::fromCode) ?: GltfWrapMode.REPEAT,
+            wrapT?.let(GltfWrapMode.Factory::fromCode) ?: GltfWrapMode.REPEAT,
             name
     )
 
@@ -123,34 +123,34 @@ internal class GltfMapper {
             name
     )
 
-    private fun TextureInfoRaw.map() = GltfTextureInfo(textures[index], texCoord)
+    private fun TextureInfoRaw.map() = GltfTextureInfo(textures[index], texCoord ?: 0)
 
     private fun NormalTextureInfoRaw.map() = GltfNormalTextureInfo(
-            textures[index], texCoord, scale.toFloat()
+            textures[index], texCoord ?: 0, scale?.let(Number::toFloat) ?: 1f
     )
 
     private fun OcclusionTextureInfoRaw.map() = GltfOcclusionTextureInfo(
-            textures[index], texCoord, strength.toFloat()
+            textures[index], texCoord ?: 0, strength?.let(Number::toFloat) ?: 1f
     )
 
     private fun PbrMetallicRoughnessRaw.map() = GltfPbrMetallicRoughness(
-            GltfColor.fromNumbers(baseColorFactor),
+            baseColorFactor?.let(GltfColor.Factory::fromNumbers) ?: GltfColor(),
             baseColorTexture?.map(),
-            metallicFactor.toFloat(),
-            roughnessFactor.toFloat(),
+            metallicFactor?.let(Number::toFloat) ?: 1f,
+            roughnessFactor?.let(Number::toFloat) ?: 1f,
             metallicRoughnessTexture?.map()
     )
 
     private fun MaterialRaw.map(index: Int) = GltfMaterial(
             index,
-            pbrMetallicRoughness.map(),
+            pbrMetallicRoughness?.map() ?: GltfPbrMetallicRoughness(),
             normalTexture?.map(),
             occlusionTexture?.map(),
             emissiveTexture?.map(),
-            GltfColor.fromNumbers(emissiveFactor),
-            GltfAlphaMode.fromCode(alphaMode),
-            alphaCutoff.toFloat(),
-            doubleSided,
+            emissiveFactor?.let(GltfColor.Factory::fromNumbers) ?: GltfColor(0f, 0f, 0f),
+            alphaMode?.let(GltfAlphaMode.Factory::fromCode) ?: GltfAlphaMode.OPAQUE,
+            alphaCutoff?.let(Number::toFloat) ?: 0.5f,
+            doubleSided ?: false,
             name
     )
 
@@ -158,7 +158,7 @@ internal class GltfMapper {
             attributes.mapValues { (_, accessorId) -> accessors[accessorId] },
             indices?.let(accessors::get),
             material?.let(materials::get) ?: GltfMaterial(-1),
-            GltfPrimitiveMode.fromCode(mode),
+            mode?.let(GltfPrimitiveMode.Factory::fromCode) ?: GltfPrimitiveMode.TRIANGLES,
             targets?.map { it.mapValues { (_, accessorId) -> accessors[accessorId] } }
     )
 
@@ -198,18 +198,23 @@ internal class GltfMapper {
         if (nodes[index] == null) nodes[index] = this.map(index, nodes)
     }
 
-    private fun NodeRaw.map(index: Int, nodes: Array<GltfNode?>) = GltfNode(
-            index = index,
-            camera = camera?.let(cameras::get),
-            children = children?.map(nodes::get)?.requireNoNulls(),
-            matrix = GltfMat4.fromNumbers(matrix),
-            mesh = mesh?.let(meshes::get),
-            rotation = GltfQuaternion.fromNumbers(rotation),
-            scale = GltfVec3.fromNumbers(scale),
-            translation = GltfVec3.fromNumbers(translation),
-            weights = weights?.map(Number::toFloat),
-            name = name
-    )
+    private fun NodeRaw.map(index: Int, nodes: Array<GltfNode?>): GltfNode {
+        val mat = matrix?.let(GltfMat4.Factory::fromNumbers)
+
+        return GltfNode(
+                index = index,
+                camera = camera?.let(cameras::get),
+                children = children?.map(nodes::get)?.requireNoNulls(),
+                matrix = mat ?: GltfMat4(),
+                mesh = mesh?.let(meshes::get),
+                rotation = mat?.let(GltfMat4::rotation) ?: rotation?.let(GltfQuaternion.Factory::fromNumbers)
+                ?: GltfQuaternion(),
+                scale = mat?.let(GltfMat4::scale) ?: scale?.let(GltfVec3.Factory::fromNumbers) ?: GltfVec3(1f, 1f, 1f),
+                translation = mat?.let(GltfMat4::translation) ?: translation?.let(GltfVec3.Factory::fromNumbers)
+                ?: GltfVec3(),
+                weights = weights?.map(Number::toFloat),
+                name = name)
+    }
 
     private fun SkinRaw.map(index: Int) = GltfSkin(
             index,
@@ -220,7 +225,9 @@ internal class GltfMapper {
     )
 
     private fun AnimationSamplerRaw.map() = GltfAnimationSampler(
-            accessors[input], GltfInterpolationType.fromCode(interpolation), accessors[output]
+            accessors[input],
+            interpolation?.let(GltfInterpolationType.Factory::fromCode) ?: GltfInterpolationType.LINEAR,
+            accessors[output]
     )
 
     private fun AnimationTargetRaw.map() = GltfAnimationTarget(
