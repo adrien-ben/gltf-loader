@@ -1,8 +1,11 @@
 package com.adrien.tools.gltf
 
+import com.beust.klaxon.JsonObject
 import java.util.*
 
-internal typealias Extensions = Map<Any, Any>
+internal typealias Extensions = Map<String, JsonObject>
+
+internal typealias Extras = JsonObject
 
 private val DATA_URI_REGEX = Regex("data:.*(?:;base64)?,(.*)")
 
@@ -11,7 +14,7 @@ internal class BufferRaw(
         val byteLength: Int,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class BufferViewRaw(
@@ -22,7 +25,7 @@ internal class BufferViewRaw(
         val target: Int? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class IndicesRaw(
@@ -30,14 +33,14 @@ internal class IndicesRaw(
         val byteOffset: Int? = null,
         val componentType: Int,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class ValuesRaw(
         val bufferView: Int,
         val byteOffset: Int? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class SparseRaw(
@@ -45,7 +48,7 @@ internal class SparseRaw(
         val indices: IndicesRaw,
         val values: ValuesRaw,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class AccessorRaw(
@@ -60,7 +63,7 @@ internal class AccessorRaw(
         val sparse: SparseRaw? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class SamplerRaw(
@@ -70,7 +73,7 @@ internal class SamplerRaw(
         val wrapT: Int? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class ImageRaw(
@@ -79,7 +82,7 @@ internal class ImageRaw(
         val bufferView: Int? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class TextureRaw(
@@ -87,14 +90,14 @@ internal class TextureRaw(
         val source: Int? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class TextureInfoRaw(
         val index: Int,
         val texCoord: Int? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class NormalTextureInfoRaw(
@@ -102,7 +105,7 @@ internal class NormalTextureInfoRaw(
         val texCoord: Int? = null,
         val scale: Number? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class OcclusionTextureInfoRaw(
@@ -110,7 +113,7 @@ internal class OcclusionTextureInfoRaw(
         val texCoord: Int? = null,
         val strength: Number? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class PbrMetallicRoughnessRaw(
@@ -120,7 +123,7 @@ internal class PbrMetallicRoughnessRaw(
         val roughnessFactor: Number? = null,
         val metallicRoughnessTexture: TextureInfoRaw? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class MaterialRaw(
@@ -134,7 +137,7 @@ internal class MaterialRaw(
         val alphaCutoff: Number? = null,
         val doubleSided: Boolean? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 /**
@@ -149,7 +152,7 @@ internal class PrimitiveRaw(
         val mode: Int? = null,
         val targets: List<MorphTargetRaw>? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class MeshRaw(
@@ -157,7 +160,7 @@ internal class MeshRaw(
         val weights: List<Number>? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class OrthographicRaw(
@@ -166,7 +169,7 @@ internal class OrthographicRaw(
         val zfar: Number,
         val znear: Number,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class PerspectiveRaw(
@@ -175,7 +178,7 @@ internal class PerspectiveRaw(
         val zfar: Number? = null,
         val znear: Number,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class CameraRaw(
@@ -184,7 +187,7 @@ internal class CameraRaw(
         val type: String,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class NodeRaw(
@@ -199,7 +202,7 @@ internal class NodeRaw(
         val weights: List<Number>? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class SkinRaw(
@@ -208,14 +211,14 @@ internal class SkinRaw(
         val joints: List<Int>,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class AnimationTargetRaw(
         val node: Int? = null,
         val path: String,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class AnimationSamplerRaw(
@@ -223,14 +226,14 @@ internal class AnimationSamplerRaw(
         val interpolation: String?,
         val output: Int,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class ChannelRaw(
         val sampler: Int,
         val target: AnimationTargetRaw,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class AnimationRaw(
@@ -238,14 +241,14 @@ internal class AnimationRaw(
         val samplers: List<AnimationSamplerRaw>,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class SceneRaw(
         val nodes: List<Int>? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class AssetRaw(
@@ -254,7 +257,7 @@ internal class AssetRaw(
         val version: String,
         val minVersion: String? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class GltfAssetRaw(
@@ -276,7 +279,7 @@ internal class GltfAssetRaw(
         val skins: List<SkinRaw>? = null,
         val textures: List<TextureRaw>? = null,
         val extensions: Extensions? = null,
-        val extras: Any? = null
+        val extras: Extras? = null
 )
 
 internal class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val data: List<ByteArray>)
