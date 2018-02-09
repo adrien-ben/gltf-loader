@@ -1,11 +1,10 @@
 package com.adrien.tools.gltf
 
-import com.beust.klaxon.JsonObject
 import java.util.*
 
-internal typealias Extensions = Map<String, JsonObject>
+internal typealias Extensions = Map<String, Any>
 
-internal typealias Extras = JsonObject
+internal typealias Extras = Any
 
 private val DATA_URI_REGEX = Regex("data:.*(?:;base64)?,(.*)")
 
