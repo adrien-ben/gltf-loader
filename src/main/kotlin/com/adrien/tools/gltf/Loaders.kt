@@ -1,15 +1,12 @@
 package com.adrien.tools.gltf
 
 import com.beust.klaxon.Converter
-
 import com.beust.klaxon.JsonValue
 import com.beust.klaxon.Klaxon
 import java.io.File
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.util.HashMap
-import kotlin.collections.ArrayList
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -29,9 +26,7 @@ private const val GLB_BIN_CHUNK_TYPE = 0x004E4942
  */
 private val morphTargetConverter = object : Converter<MorphTargetRaw> {
     override fun fromJson(jv: JsonValue): MorphTargetRaw {
-        val map = HashMap<String, Int>()
-        jv.obj?.mapValuesTo(map) { (_, value) -> value as Int }
-        return MorphTargetRaw(map)
+        return MorphTargetRaw(jv.obj?.mapValues { (_, value) -> value as Int } ?: emptyMap())
     }
 
     /**
