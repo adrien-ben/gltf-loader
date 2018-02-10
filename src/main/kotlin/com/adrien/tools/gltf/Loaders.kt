@@ -75,14 +75,14 @@ private class GltfLoader {
      */
     fun load(path: String): GltfRaw? {
         val file = File(path)
-        val gltfAssetRaw = Klaxon()
+        val assetRaw = Klaxon()
                 .converter(morphTargetConverter)
                 .parse<GltfAssetRaw>(file)
                 ?: return null
 
-        val data = gltfAssetRaw.buffers?.map { it.getData(file.parent.toString()) } ?: emptyList()
+        val data = assetRaw.buffers?.map { it.getData(file.parent.toString()) } ?: emptyList()
 
-        return GltfRaw(gltfAssetRaw, data)
+        return Validator().validate(GltfRaw(assetRaw, data))
     }
 }
 
@@ -120,7 +120,7 @@ private class GlbLoader {
                     ?.filterIndexed { index, buffer -> index != 0 || buffer.uri != null }
                     ?.mapTo(data) { it.getData(file.parent.toString()) }
 
-            return GltfRaw(assetRaw, data)
+            return Validator().validate(GltfRaw(assetRaw, data))
         }
     }
 

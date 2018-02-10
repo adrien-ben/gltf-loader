@@ -4,11 +4,32 @@ Loader for [glTF2.0](https://github.com/KhronosGroup/glTF) files written in kotl
 The project uses [Klaxon](https://github.com/cbeust/klaxon) to parse JSON.
 
 
-## What it does ?
+## What it does
 
-This library can load .gltf file and .glb files. 
+**gltf-loader** loads glTF file. 
 
-The library provides a higher level representation of the data present in the gltf files. The main difference is 
+## Features
+
+- loads .gltf files
+- loads.glb files
+- loads external .bin files
+- decodes base64 embedded buffers
+- decodes base64 embedded textures
+- minimal validation
+
+## Usage
+
+```kotlin
+val gltf = GltfAsset.fromFile("pathTo/asset.gltf")
+val glb = GltfAsset.fromFile("pathTo/asset.glb")
+```
+
+> Note that file extension is important because **gltf-loader** selects the proper loader implementation 
+> depending on the file extension
+
+## Concept
+
+**gltf-loader** provides a higher level representation of the data present in the gltf files. The main difference is 
 that objects hold actual references to other objects rather than the indices of these object in an centralized array.
 Those shared objects all have an `index` field which is their position in the array centralizing the resources of the 
 same type. It makes navigation easier without loosing the benefit of having those resources centralized.
@@ -31,18 +52,23 @@ Attributes with a defined range of allowed values are replaced by enums holding 
 val componentTypeConstantValue = ComponentType.FLOAT.code // 5126 
 ```
 
-Buffer data is loaded (or decoded for embedded base64 buffers) alongside the json descriptor so clients don't have 
-to. Embedded base64 image data is decoded too but external image files are not loaded.
+## Validation
 
-## Usage
+After loading the file **gltf-loader** performs a minimal validation pass on loaded data. For now it only checks
+that data respect the [json schemas](https://github.com/KhronosGroup/glTF/tree/master/specification/2.0/schema).
 
-```kotlin
-val gltf = GltfAsset.fromFile("pathTo/asset.gltf")
-val glb = GltfAsset.fromFile("pathTo/asset.glb")
-```
+## Buffers
 
-> Note that file extension is important because the library selects the proper loader implementation 
-> depending on the file extension
+Buffer data is loaded alongside the json descriptor so clients don't have to. This includes buffers contained
+in external .bin files and embedded base64 buffers. Base 64 buffers are decoded when the file is loaded.
+
+##Images 
+
+Embedded base64 image data is decoded too but external image files are not loaded.
+
+
+
+
 
 ## Nodes' Transforms
 
@@ -53,5 +79,4 @@ in the original file.
 
 ## Todos
 
-* Post loading validation
 * Extensions support (pbrSpecularGlossiness)
