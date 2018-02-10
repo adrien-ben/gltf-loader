@@ -62,7 +62,7 @@ that data respect the [json schemas](https://github.com/KhronosGroup/glTF/tree/m
 Buffer data is loaded alongside the json descriptor so clients don't have to. This includes buffers contained
 in external .bin files and embedded base64 buffers. Base 64 buffers are decoded when the file is loaded.
 
-##Images 
+## Images 
 
 Embedded base64 image data is decoded too but external image files are not loaded.
 
