@@ -49,26 +49,30 @@ private fun BufferRaw.getData(dir: String): ByteArray {
 }
 
 /**
- * Gltf asset loader. Load valid .glb and .gltf files.
+ * Base interface for loaders
  */
-internal class Loader {
+internal interface Loader {
 
-    fun load(path: String) = when {
-        path.endsWith(".glb") -> GlbLoader().load(path)
-        path.endsWith(".gltf") -> GltfLoader().load(path)
-        else -> throw IllegalArgumentException("Unsupported file format. Only .glb and .gltf files are supported.")
+    fun load(path: String): GltfRaw?
+
+    companion object {
+        fun fromExtension(extension: String) = when (extension) {
+            "gltf" -> GltfLoader()
+            "glb" -> GlbLoader()
+            else -> throw IllegalArgumentException("Unsupported file extension $extension")
+        }
     }
 }
 
 /**
  * Loader for .gltf files.
  */
-private class GltfLoader {
+private class GltfLoader : Loader {
 
     /**
      * Load a .gltf file.
      */
-    fun load(path: String): GltfRaw? {
+    override fun load(path: String): GltfRaw? {
         val file = File(path)
         val assetRaw = Klaxon()
                 .converter(morphTargetConverter)
@@ -84,14 +88,14 @@ private class GltfLoader {
 /**
  * Loader for .glb files.
  */
-private class GlbLoader {
+private class GlbLoader : Loader {
 
     private val int32Buffer = ByteArray(4)
 
     /**
      * Load a .glb file.
      */
-    fun load(path: String): GltfRaw? {
+    override fun load(path: String): GltfRaw? {
         val file = File(path)
         file.inputStream().use {
             val glbHeader = it.readGlbHeader().apply { validate() }

@@ -350,8 +350,8 @@ class GltfAsset(
          * Load a gltf asset model from the gltf json file [path]
          */
         fun fromFile(path: String): GltfAsset? {
-            val gltfModel = Loader().load(path) ?: return null
-            return Mapper().map(gltfModel)
+            val asset = Loader.fromExtension(path.substringAfterLast('.')).load(path) ?: return null
+            return Mapper().map(asset)
         }
     }
 }
