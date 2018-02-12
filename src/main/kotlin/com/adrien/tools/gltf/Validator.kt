@@ -149,13 +149,13 @@ private fun NormalTextureInfoRaw.validate() {
 private fun OcclusionTextureInfoRaw.validate() {
     index.isAtLeast(MIN_REF_INDEX, "Occlusion texture info's texture index should be at least $MIN_REF_INDEX")
     texCoord?.isAtLeast(MIN_TEXCOORDS, "Occlusion texture info's texture coordinate should be at least $MIN_TEXCOORDS")
-    strength?.isInRange(OCCLUSION_TEXTURE_STRENGTH, "Occlusion texture info's strength should be in range $OCCLUSION_TEXTURE_STRENGTH")
+    strength?.toDouble()?.isInRange(OCCLUSION_TEXTURE_STRENGTH, "Occlusion texture info's strength should be in range $OCCLUSION_TEXTURE_STRENGTH")
 }
 
 private fun PbrMetallicRoughnessRaw.validate() {
     baseColorFactor?.hasSize(COLOR_SIZE, "PbrMetallicRoughness's base color should be of size $COLOR_SIZE")
-    metallicFactor?.isInRange(METALLIC_FACTOR_RANGE, "PbrMetallicRoughness's metallic factor should be in range $METALLIC_FACTOR_RANGE")
-    roughnessFactor?.isInRange(ROUGHNESS_FACTOR_RANGE, "PbrMetallicRoughness's roughness factor should be in range $ROUGHNESS_FACTOR_RANGE")
+    metallicFactor?.toDouble()?.isInRange(METALLIC_FACTOR_RANGE, "PbrMetallicRoughness's metallic factor should be in range $METALLIC_FACTOR_RANGE")
+    roughnessFactor?.toDouble()?.isInRange(ROUGHNESS_FACTOR_RANGE, "PbrMetallicRoughness's roughness factor should be in range $ROUGHNESS_FACTOR_RANGE")
 }
 
 private fun MaterialRaw.validate() {
@@ -165,7 +165,7 @@ private fun MaterialRaw.validate() {
     emissiveTexture?.validate()
     emissiveFactor?.hasSize(EMISSIVE_FACTOR_SIZE, "Material's emissive factor should be of size $EMISSIVE_FACTOR_SIZE")
     alphaMode?.isOneOf(MATERIAL_ALPHA_MODES, "Material's alpha mode should be one of $MATERIAL_ALPHA_MODES")
-    alphaCutoff?.isAtLeast(MIN_ALPHA_CUTOFF, "Material's alpha cutoff should be at least $MIN_ALPHA_CUTOFF")
+    alphaCutoff?.toDouble()?.isAtLeast(MIN_ALPHA_CUTOFF, "Material's alpha cutoff should be at least $MIN_ALPHA_CUTOFF")
 }
 
 private fun PrimitiveRaw.validate() {
@@ -182,15 +182,15 @@ private fun MeshRaw.validate() {
 }
 
 private fun OrthographicRaw.validate() {
-    zfar.isGreaterThan(MIN_ORTHO_ZFAR, "Orthographic's zfar should be greater than $MIN_ORTHO_ZFAR")
-    znear.isAtLeast(MIN_ORTHO_ZNEAR, "Orthographic's znear should be at least $MIN_ORTHO_ZNEAR")
+    zfar.toDouble().isGreaterThan(MIN_ORTHO_ZFAR, "Orthographic's zfar should be greater than $MIN_ORTHO_ZFAR")
+    znear.toDouble().isAtLeast(MIN_ORTHO_ZNEAR, "Orthographic's znear should be at least $MIN_ORTHO_ZNEAR")
 }
 
 private fun PerspectiveRaw.validate() {
-    aspectRatio?.isGreaterThan(MIN_ASPECT_RATIO, "Perspective's aspect ratio should be greater than $MIN_ASPECT_RATIO")
-    yfov.isGreaterThan(MIN_FOV, "Perspective's fov should be greater than $MIN_FOV")
-    zfar?.isGreaterThan(MIN_PERSPECTIVE_ZFAR, "Perspective's zfar should be greater than $MIN_PERSPECTIVE_ZFAR")
-    znear.isGreaterThan(MIN_PERSPECTIVE_ZNEAR, "Perspective's znear should be greater than $MIN_PERSPECTIVE_ZNEAR")
+    aspectRatio?.toDouble()?.isGreaterThan(MIN_ASPECT_RATIO, "Perspective's aspect ratio should be greater than $MIN_ASPECT_RATIO")
+    yfov.toDouble().isGreaterThan(MIN_FOV, "Perspective's fov should be greater than $MIN_FOV")
+    zfar?.toDouble()?.isGreaterThan(MIN_PERSPECTIVE_ZFAR, "Perspective's zfar should be greater than $MIN_PERSPECTIVE_ZFAR")
+    znear.toDouble().isGreaterThan(MIN_PERSPECTIVE_ZNEAR, "Perspective's znear should be greater than $MIN_PERSPECTIVE_ZNEAR")
 }
 
 private fun CameraRaw.validate() {

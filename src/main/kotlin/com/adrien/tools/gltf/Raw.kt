@@ -57,8 +57,8 @@ internal class AccessorRaw(
         val normalized: Boolean? = null,
         val count: Int,
         val type: String,
-        val max: List<Double>? = null,
-        val min: List<Double>? = null,
+        val max: List<Number>? = null,
+        val min: List<Number>? = null,
         val sparse: SparseRaw? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
@@ -102,7 +102,7 @@ internal class TextureInfoRaw(
 internal class NormalTextureInfoRaw(
         val index: Int,
         val texCoord: Int? = null,
-        val scale: Double? = null,
+        val scale: Number? = null,
         val extensions: Extensions? = null,
         val extras: Extras? = null
 )
@@ -110,16 +110,16 @@ internal class NormalTextureInfoRaw(
 internal class OcclusionTextureInfoRaw(
         val index: Int,
         val texCoord: Int? = null,
-        val strength: Double? = null,
+        val strength: Number? = null,
         val extensions: Extensions? = null,
         val extras: Extras? = null
 )
 
 internal class PbrMetallicRoughnessRaw(
-        val baseColorFactor: List<Double>? = null,
+        val baseColorFactor: List<Number>? = null,
         val baseColorTexture: TextureInfoRaw? = null,
-        val metallicFactor: Double? = null,
-        val roughnessFactor: Double? = null,
+        val metallicFactor: Number? = null,
+        val roughnessFactor: Number? = null,
         val metallicRoughnessTexture: TextureInfoRaw? = null,
         val extensions: Extensions? = null,
         val extras: Extras? = null
@@ -131,9 +131,9 @@ internal class MaterialRaw(
         val normalTexture: NormalTextureInfoRaw? = null,
         val occlusionTexture: OcclusionTextureInfoRaw? = null,
         val emissiveTexture: TextureInfoRaw? = null,
-        val emissiveFactor: List<Double>? = null,
+        val emissiveFactor: List<Number>? = null,
         val alphaMode: String? = null,
-        val alphaCutoff: Double? = null,
+        val alphaCutoff: Number? = null,
         val doubleSided: Boolean? = null,
         val extensions: Extensions? = null,
         val extras: Extras? = null
@@ -156,26 +156,26 @@ internal class PrimitiveRaw(
 
 internal class MeshRaw(
         val primitives: List<PrimitiveRaw>,
-        val weights: List<Double>? = null,
+        val weights: List<Number>? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
         val extras: Extras? = null
 )
 
 internal class OrthographicRaw(
-        val xmag: Double,
-        val ymag: Double,
-        val zfar: Double,
-        val znear: Double,
+        val xmag: Number,
+        val ymag: Number,
+        val zfar: Number,
+        val znear: Number,
         val extensions: Extensions? = null,
         val extras: Extras? = null
 )
 
 internal class PerspectiveRaw(
-        val aspectRatio: Double? = null,
-        val yfov: Double,
-        val zfar: Double? = null,
-        val znear: Double,
+        val aspectRatio: Number? = null,
+        val yfov: Number,
+        val zfar: Number? = null,
+        val znear: Number,
         val extensions: Extensions? = null,
         val extras: Extras? = null
 )
@@ -193,12 +193,12 @@ internal class NodeRaw(
         val camera: Int? = null,
         val children: List<Int>? = null,
         val skin: Int? = null,
-        val matrix: List<Double>? = null,
+        val matrix: List<Number>? = null,
         val mesh: Int? = null,
-        val rotation: List<Double>? = null,
-        val scale: List<Double>? = null,
-        val translation: List<Double>? = null,
-        val weights: List<Double>? = null,
+        val rotation: List<Number>? = null,
+        val scale: List<Number>? = null,
+        val translation: List<Number>? = null,
+        val weights: List<Number>? = null,
         val name: String? = null,
         val extensions: Extensions? = null,
         val extras: Extras? = null
