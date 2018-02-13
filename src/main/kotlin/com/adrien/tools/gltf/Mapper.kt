@@ -2,43 +2,65 @@ package com.adrien.tools.gltf
 
 /**
  * [GltfAsset] mapper.
+ *
+ * On mapper must be created for each asset to map. Each call to
+ * [Mapper.map] will generate a new mapped instance.
  */
-internal class Mapper {
+internal class Mapper(private val gltfRaw: GltfRaw) {
 
-    private lateinit var buffers: List<GltfBuffer>
-    private lateinit var bufferViews: List<GltfBufferView>
-    private lateinit var accessors: List<GltfAccessor>
-    private lateinit var samplers: List<GltfSampler>
-    private lateinit var images: List<GltfImage>
-    private lateinit var textures: List<GltfTexture>
-    private lateinit var materials: List<GltfMaterial>
-    private lateinit var meshes: List<GltfMesh>
-    private lateinit var cameras: List<GltfCamera>
-    private lateinit var nodes: List<GltfNode>
-    private lateinit var skins: List<GltfSkin>
+    private val asset = gltfRaw.gltfAssetRaw
 
-    fun map(input: GltfRaw): GltfAsset {
+    private val buffers: List<GltfBuffer> by lazy {
+        asset.buffers?.mapIndexed { index, buffer -> buffer.map(index, gltfRaw) } ?: emptyList()
+    }
 
-        val asset = input.gltfAssetRaw
+    private val bufferViews: List<GltfBufferView> by lazy {
+        asset.bufferViews?.mapIndexed { index, view -> view.map(index, buffers) } ?: emptyList()
+    }
 
-        buffers = asset.buffers?.mapIndexed { index, buffer -> buffer.map(index, input) } ?: emptyList()
-        bufferViews = asset.bufferViews?.mapIndexed { index, view -> view.map(index, buffers) } ?: emptyList()
-        accessors = asset.accessors?.mapIndexed { index, accessor -> accessor.map(index, bufferViews) } ?: emptyList()
-        samplers = asset.samplers?.mapIndexed { index, sampler -> sampler.map(index) } ?: emptyList()
-        images = asset.images?.mapIndexed { index, image -> image.map(index, bufferViews) } ?: emptyList()
-        textures = asset.textures?.mapIndexed { index, texture -> texture.map(index, samplers, images) } ?: emptyList()
-        materials = asset.materials?.mapIndexed { index, material -> material.map(index, textures) } ?: emptyList()
-        meshes = asset.meshes?.mapIndexed { index, mesh -> mesh.map(index, accessors, materials) } ?: emptyList()
-        cameras = asset.cameras?.mapIndexed { index, camera -> camera.map(index) } ?: emptyList()
+    private val accessors: List<GltfAccessor> by lazy {
+        asset.accessors?.mapIndexed { index, accessor -> accessor.map(index, bufferViews) } ?: emptyList()
+    }
 
-        // map nodes recursively, skin are omitted
-        nodes = Array<GltfNode?>(asset.nodes?.size ?: 0) { null }.let {
+    private val samplers: List<GltfSampler> by lazy {
+        asset.samplers?.mapIndexed { index, sampler -> sampler.map(index) } ?: emptyList()
+    }
+
+    private val images: List<GltfImage> by lazy {
+        asset.images?.mapIndexed { index, image -> image.map(index, bufferViews) } ?: emptyList()
+    }
+
+    private val textures: List<GltfTexture> by lazy {
+        asset.textures?.mapIndexed { index, texture -> texture.map(index, samplers, images) } ?: emptyList()
+    }
+
+    private val materials: List<GltfMaterial> by lazy {
+        asset.materials?.mapIndexed { index, material -> material.map(index, textures) } ?: emptyList()
+    }
+
+    private val meshes: List<GltfMesh> by lazy {
+        asset.meshes?.mapIndexed { index, mesh -> mesh.map(index, accessors, materials) } ?: emptyList()
+    }
+
+    private val cameras: List<GltfCamera> by lazy {
+        asset.cameras?.mapIndexed { index, camera -> camera.map(index) } ?: emptyList()
+    }
+
+    private val nodes: List<GltfNode> by lazy {
+        Array<GltfNode?>(asset.nodes?.size ?: 0) { null }.let {
             asset.nodes?.forEachIndexed { index, nodeRaw -> nodeRaw.map(index, asset, it, cameras, meshes) }
             it.requireNoNulls().asList()
         }
+    }
 
-        // map skins then update nodes with loaded skins
-        skins = asset.skins?.mapIndexed { index, skin -> skin.map(index, accessors, nodes) } ?: emptyList()
+    private val skins: List<GltfSkin> by lazy {
+        asset.skins?.mapIndexed { index, skin -> skin.map(index, accessors, nodes) } ?: emptyList()
+    }
+
+    /**
+     * Map the asset.
+     */
+    fun map(): GltfAsset {
         asset.nodes?.forEachIndexed { index, nodeRaw -> nodes[index].skin = nodeRaw.skin?.let { skins[it] } }
 
         val animations = asset.animations?.map { it.map(accessors, nodes) } ?: emptyList()

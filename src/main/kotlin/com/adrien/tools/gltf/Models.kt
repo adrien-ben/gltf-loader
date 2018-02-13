@@ -351,7 +351,7 @@ class GltfAsset(
          */
         fun fromFile(path: String): GltfAsset? {
             val asset = Loader.fromExtension(path.substringAfterLast('.')).load(path) ?: return null
-            return Mapper().map(asset)
+            return Mapper(asset).map()
         }
     }
 }
