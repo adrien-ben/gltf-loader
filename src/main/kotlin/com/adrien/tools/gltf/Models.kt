@@ -344,6 +344,10 @@ class GltfAsset(
         val scenes: List<GltfScene>,
         val scene: GltfScene?
 ) {
+
+    /**
+     * Companion factory.
+     */
     companion object Factory {
 
         /**
