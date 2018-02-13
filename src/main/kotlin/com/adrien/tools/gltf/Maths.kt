@@ -12,7 +12,7 @@ class GltfVec3(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
      */
     internal fun length() = sqrt(x * x + y * y + z * z)
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a vector from a list of [Number]s. The list must contain 3 elements
@@ -29,7 +29,7 @@ class GltfVec3(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
  */
 class GltfQuaternion(val i: Float = 0f, val j: Float = 0f, val k: Float = 0f, val a: Float = 1f) {
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a quaternion from a list of [Number]s. The list must contain 4 elements
@@ -90,7 +90,7 @@ class GltfMat4(
             GltfVec3(m20, m21, m22).length()
     )
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a matrix from a list of [Number]s. The list must contain 16 elements

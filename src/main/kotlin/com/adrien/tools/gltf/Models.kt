@@ -5,7 +5,7 @@ package com.adrien.tools.gltf
  */
 class GltfColor(val r: Float = 1f, val g: Float = 1f, val b: Float = 1f, val a: Float = 1f) {
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a color from a list of [Number]s. The list must contain 3 or 4 elements. If it contains

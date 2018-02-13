@@ -18,12 +18,7 @@ private const val GLB_JSON_CHUNK_TYPE = 0x4E4F534A
 
 private const val GLB_BIN_CHUNK_TYPE = 0x004E4942
 
-/**
- * Custom converter for [MorphTargetRaw]
- *
- * TODO: Remove this when Klaxon can deserialize nested collections
- *
- */
+// TODO: Remove this when Klaxon can deserialize nested collections
 private val morphTargetConverter = object : Converter<MorphTargetRaw> {
     override fun fromJson(jv: JsonValue): MorphTargetRaw {
         return MorphTargetRaw(jv.obj?.mapValues { (_, value) -> value as Int } ?: emptyMap())
@@ -49,13 +44,23 @@ private fun BufferRaw.getData(dir: String): ByteArray {
 }
 
 /**
- * Base interface for loaders
+ * Base interface for loaders.
  */
 internal interface Loader {
 
+    /**
+     * Load a gltf asset from a file.
+     */
     fun load(path: String): GltfRaw?
 
-    companion object {
+    /**
+     * Companion factory
+     */
+    companion object Factory {
+
+        /**
+         * Retrieve a [Loader] implementation from a file [extension].
+         */
         fun fromExtension(extension: String) = when (extension) {
             "gltf" -> GltfLoader()
             "glb" -> GlbLoader()

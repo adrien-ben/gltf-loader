@@ -11,7 +11,7 @@ enum class GltfComponentType(val byteSize: Int, val code: Int) {
     UNSIGNED_INT(4, 5125),
     FLOAT(4, 5126);
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a component type from a gltf code.
@@ -40,7 +40,7 @@ enum class GltfType(val componentCount: Int, val code: String) {
     MAT3(9, "MAT3"),
     MAT4(16, "MAT4");
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a type from a gltf code.
@@ -66,7 +66,7 @@ enum class GltfAlphaMode(val code: String) {
     MASK("MASK"),
     BLEND("BLEND");
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a alpha mode from a gltf code.
@@ -92,7 +92,7 @@ enum class GltfFilter(val code: Int) {
     NEAREST_MIPMAP_LINEAR(9986),
     LINEAR_MIPMAP_LINEAR(9987);
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a filter from a gltf code.
@@ -117,7 +117,7 @@ enum class GltfWrapMode(val code: Int) {
     MIRRORED_REPEAT(33648),
     REPEAT(10497);
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a wrap mode from a gltf code.
@@ -138,7 +138,7 @@ enum class GltfBufferTarget(val code: Int) {
     ARRAY_BUFFER(34962),
     ELEMENT_ARRAY_BUFFER(34963);
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a buffer target from a gltf code.
@@ -163,7 +163,7 @@ enum class GltfPrimitiveMode(val code: Int) {
     TRIANGLE_STRIP(5),
     TRIANGLE_FAN(6);
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a primitive mode from a gltf code.
@@ -188,7 +188,7 @@ enum class GltfMimeType(val code: String) {
     JPEG("image/jpeg"),
     PNG("image/png");
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a mime type from a gltf code.
@@ -208,7 +208,7 @@ enum class GltfCameraType(val code: String) {
     ORTHOGRAPHIC("orthographic"),
     PERSPECTIVE("perspective");
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate a camera type from a gltf code.
@@ -230,7 +230,7 @@ enum class GltfAnimationTargetPath(val code: String) {
     SCALE("scale"),
     WEIGHTS("weights");
 
-    companion object {
+    internal companion object {
 
         /**
          * Generate an animation target path from a gltf code.
@@ -253,7 +253,7 @@ enum class GltfInterpolationType(val code: String) {
     STEP("STEP"),
     CUBICSPLINE("CUBICSPLINE");
 
-    companion object Factory {
+    internal companion object Factory {
 
         /**
          * Generate an interpolation type from a gltf code.
