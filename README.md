@@ -1,5 +1,8 @@
 # gltf-loader
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0537889cdb547189543b986a1adfbfc)](https://www.codacy.com/app/adrien.bennadji/gltf-loader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=adrien-ben/gltf-loader&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/adrien-ben/gltf-loader.svg?branch=master)](https://travis-ci.org/adrien-ben/gltf-loader)
+
 Loader for [glTF2.0](https://github.com/KhronosGroup/glTF) files written in kotlin. 
 The project uses [Klaxon](https://github.com/cbeust/klaxon) to parse JSON.
 
@@ -11,7 +14,7 @@ The project uses [Klaxon](https://github.com/cbeust/klaxon) to parse JSON.
 ## Features
 
 - loads .gltf files
-- loads.glb files
+- loads .glb files
 - loads external .bin files
 - decodes base64 embedded buffers
 - decodes base64 embedded textures
@@ -66,13 +69,9 @@ in external .bin files and embedded base64 buffers. Base 64 buffers are decoded 
 
 Embedded base64 image data is decoded too but external image files are not loaded.
 
-
-
-
-
 ## Nodes' Transforms
 
-In gltf files, as stated in [gltf's specification](https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#nodes-and-hierarchy) 
+In gltf files, as stated in [gltf's specification](https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#transformations) 
 : *any node can define a local space transformation either by supplying a  matrix property, or any of translation, rotation, and scale properties*. 
 When a node contains a matrix, **gltf-loader** will automatically extract the translation, scale and rotation properties even if their are not defined
 in the original file.
