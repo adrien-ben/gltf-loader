@@ -1,5 +1,15 @@
 package com.adrien.tools.gltf
 
+import com.adrien.tools.gltf.Matchers.atLeast
+import com.adrien.tools.gltf.Matchers.be
+import com.adrien.tools.gltf.Matchers.empty
+import com.adrien.tools.gltf.Matchers.equalTo
+import com.adrien.tools.gltf.Matchers.greateThan
+import com.adrien.tools.gltf.Matchers.haveSize
+import com.adrien.tools.gltf.Matchers.inRange
+import com.adrien.tools.gltf.Matchers.not
+import com.adrien.tools.gltf.Matchers.oneOf
+
 private const val REQUIRED_VERSION = "2.0"
 
 private const val MIN_BUFFER_LENGTH = 1
@@ -26,20 +36,20 @@ private val OCCLUSION_TEXTURE_STRENGTH = 0.0..1.0
 private val METALLIC_FACTOR_RANGE = 0.0..1.0
 private val ROUGHNESS_FACTOR_RANGE = 0.0..1.0
 
-private val BUFFER_TARGETS = arrayOf(34962, 34963)
-private val INDICES_COMPONENT_TYPES = arrayOf(5121, 5123, 5125)
-private val ACCESSOR_COMPONENT_TYPES = arrayOf(5120, 5121, 5122, 5123, 5125, 5126)
-private val ACCESSOR_TYPES = arrayOf("SCALAR", "VEC2", "VEC3", "VEC4", "MAT2", "MAT3", "MAT4")
-private val ACCESSOR_MIN_MAX_SIZES = arrayOf(1, 2, 3, 4, 9, 16)
-private val SAMPLER_MIN_FILTERS = arrayOf(9728, 9729, 9984, 9985, 9986, 9987)
-private val SAMPLER_MAG_FILTERS = arrayOf(9728, 9729)
-private val SAMPLER_WRAPS = arrayOf(10497, 33648, 33071)
-private val IMAGE_MIME_TYPES = arrayOf("image/jpeg", "image/png")
-private val MATERIAL_ALPHA_MODES = arrayOf("OPAQUE", "MASK", "BLEND")
-private val PRIMITIVE_MODES = arrayOf(0, 1, 2, 3, 4, 5, 6)
-private val CAMERA_TYPES = arrayOf("perspective", "orthographic")
-private val TARGET_PATHS = arrayOf("translation", "rotation", "scale", "weights")
-private val INTERPOLATION_TYPES = arrayOf("LINEAR", "STEP", "CUBICSPLINE")
+private val BUFFER_TARGETS = listOf(34962, 34963)
+private val INDICES_COMPONENT_TYPES = listOf(5121, 5123, 5125)
+private val ACCESSOR_COMPONENT_TYPES = listOf(5120, 5121, 5122, 5123, 5125, 5126)
+private val ACCESSOR_TYPES = listOf("SCALAR", "VEC2", "VEC3", "VEC4", "MAT2", "MAT3", "MAT4")
+private val ACCESSOR_MIN_MAX_SIZES = listOf(1, 2, 3, 4, 9, 16)
+private val SAMPLER_MIN_FILTERS = listOf(9728, 9729, 9984, 9985, 9986, 9987)
+private val SAMPLER_MAG_FILTERS = listOf(9728, 9729)
+private val SAMPLER_WRAPS = listOf(10497, 33648, 33071)
+private val IMAGE_MIME_TYPES = listOf("image/jpeg", "image/png")
+private val MATERIAL_ALPHA_MODES = listOf("OPAQUE", "MASK", "BLEND")
+private val PRIMITIVE_MODES = listOf(0, 1, 2, 3, 4, 5, 6)
+private val CAMERA_TYPES = listOf("perspective", "orthographic")
+private val TARGET_PATHS = listOf("translation", "rotation", "scale", "weights")
+private val INTERPOLATION_TYPES = listOf("LINEAR", "STEP", "CUBICSPLINE")
 
 /**
  * Exception thrown is case of validation error.
@@ -61,205 +71,210 @@ internal class Validator {
     fun validate(gltfRaw: GltfRaw): GltfRaw {
         gltfRaw.gltfAssetRaw.apply {
             asset.validate()
-            buffers?.isNotEmpty("Buffers should not be empty")?.forEach(BufferRaw::validate)
-            bufferViews?.isNotEmpty("Buffer view should ne be empty")?.forEach(BufferViewRaw::validate)
-            accessors?.isNotEmpty("Accessors should not be empty")?.forEach(AccessorRaw::validate)
-            samplers?.isNotEmpty("Samplers should not be empty")?.forEach(SamplerRaw::validate)
-            images?.isNotEmpty("Images should not be empty")?.forEach(ImageRaw::validate)
-            textures?.isNotEmpty("Textures should not be empty")?.forEach(TextureRaw::validate)
-            materials?.isNotEmpty("Materials should not be empty")?.forEach(MaterialRaw::validate)
-            meshes?.isNotEmpty("Meshes should not be empty")?.forEach(MeshRaw::validate)
-            cameras?.isNotEmpty("Cameras should not be empty")?.forEach(CameraRaw::validate)
-            nodes?.isNotEmpty("Nodes should not be empty")?.forEach(NodeRaw::validate)
-            skins?.isNotEmpty("Skins should not be empty")?.forEach(SkinRaw::validate)
-            animations?.isNotEmpty("Animations should not be empty")?.forEach(AnimationRaw::validate)
-            scenes?.isNotEmpty("Scenes should not be empty")?.forEach(SceneRaw::validate)
+            buffers?.should(not(be(empty())), "buffers")?.forEachIndexed { index, it -> it.validate(index) }
+            bufferViews?.should(not(be(empty())), "bufferViews")?.forEachIndexed { index, it -> it.validate(index) }
+            accessors?.should(not(be(empty())), "accessors")?.forEachIndexed { index, it -> it.validate(index) }
+            samplers?.should(not(be(empty())), "samplers")?.forEachIndexed { index, it -> it.validate(index) }
+            images?.should(not(be(empty())), "images")?.forEachIndexed { index, it -> it.validate(index) }
+            textures?.should(not(be(empty())), "textures")?.forEachIndexed { index, it -> it.validate(index) }
+            materials?.should(not(be(empty())), "materials")?.forEachIndexed { index, it -> it.validate(index) }
+            meshes?.should(not(be(empty())), "meshes")?.forEachIndexed { index, it -> it.validate(index) }
+            cameras?.should(not(be(empty())), "cameras")?.forEachIndexed { index, it -> it.validate(index) }
+            nodes?.should(not(be(empty())), "nodes")?.forEachIndexed { index, it -> it.validate(index) }
+            skins?.should(not(be(empty())), "skins")?.forEachIndexed { index, it -> it.validate(index) }
+            animations?.should(not(be(empty())), "animations")?.forEachIndexed { index, it -> it.validate(index) }
+            scenes?.should(not(be(empty())), "scenes")?.forEachIndexed { index, it -> it.validate(index) }
         }
         return gltfRaw
     }
 }
 
-private fun BufferRaw.validate() {
-    byteLength.isAtLeast(MIN_BUFFER_LENGTH, "Buffer's byte length should be >= $MIN_BUFFER_LENGTH")
+private fun BufferRaw.validate(index: Int) {
+    val path = "buffers[$index]"
+    byteLength.should(be(atLeast(MIN_BUFFER_LENGTH)), "$path.byteLength")
 }
 
-private fun BufferViewRaw.validate() {
-    buffer.isAtLeast(MIN_REF_INDEX, "Buffer view's buffer index should be at least $MIN_REF_INDEX")
-    byteOffset?.isAtLeast(MIN_BYTE_OFFSET, "Buffer view's buffer byte offset should be at least $MIN_BYTE_OFFSET")
-    byteLength.isAtLeast(MIN_BUFFER_LENGTH, "Buffer view's byte length should be >= $MIN_BUFFER_LENGTH")
-    byteStride?.isInRange(RANGE_BYTE_STRIDE, "Buffer view's byte stride should be in range $RANGE_BYTE_STRIDE")
-    target?.isOneOf(BUFFER_TARGETS, "Buffer view's target should be one of $BUFFER_TARGETS")
+private fun BufferViewRaw.validate(index: Int) {
+    val path = "bufferViews[$index]"
+    buffer.should(be(atLeast(MIN_REF_INDEX)), "$path.buffer")
+    byteOffset?.should(be(atLeast(MIN_BYTE_OFFSET)), "$path.byteOffset")
+    byteLength.should(be(atLeast(MIN_BUFFER_LENGTH)), "$path.byteLength")
+    byteStride?.should(be(inRange(RANGE_BYTE_STRIDE)), "$path.byteStride")
+    target?.should(be(oneOf(BUFFER_TARGETS)), "$path.target")
 }
 
-private fun IndicesRaw.validate() {
-    bufferView.isAtLeast(MIN_REF_INDEX, "Indices' buffer view index should be at least $MIN_REF_INDEX")
-    byteOffset?.isAtLeast(MIN_BYTE_OFFSET, "Indices' byte offset should be at least $MIN_BYTE_OFFSET")
-    componentType.isOneOf(INDICES_COMPONENT_TYPES, "Indices' component type should be one of $INDICES_COMPONENT_TYPES")
+private fun IndicesRaw.validate(fieldPath: String) {
+    bufferView.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.bufferView")
+    byteOffset?.should(be(atLeast(MIN_BYTE_OFFSET)), "$fieldPath.byteOffset")
+    componentType.should(be(oneOf(INDICES_COMPONENT_TYPES)), "$fieldPath.componentType")
 }
 
-private fun ValuesRaw.validate() {
-    bufferView.isAtLeast(MIN_REF_INDEX, "Values' buffer view index should be at least $MIN_REF_INDEX")
-    byteOffset?.isAtLeast(MIN_BYTE_OFFSET, "Values' byte offset should be at least $MIN_BYTE_OFFSET")
+private fun ValuesRaw.validate(fieldPath: String) {
+    bufferView.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.bufferView")
+    byteOffset?.should(be(atLeast(MIN_BYTE_OFFSET)), "$fieldPath.byteOffset")
 }
 
-private fun SparseRaw.validate() {
-    count.isAtLeast(SPARSE_MIN_COUNT, "Sparse's count should be at least $SPARSE_MIN_COUNT")
-    indices.validate()
-    values.validate()
+private fun SparseRaw.validate(fieldPath: String) {
+    count.should(be(atLeast(SPARSE_MIN_COUNT)), "$fieldPath.count")
+    indices.validate("$fieldPath.indices")
+    values.validate("$fieldPath.values")
 }
 
-private fun AccessorRaw.validate() {
-    bufferView?.isAtLeast(MIN_REF_INDEX, "Accessor's buffer view index should be at least $MIN_REF_INDEX")
-    byteOffset?.isAtLeast(MIN_BYTE_OFFSET, "Accessor's byte offset should be at least $MIN_BYTE_OFFSET")
-    componentType.isOneOf(ACCESSOR_COMPONENT_TYPES, "Accessor's component type should be one of $ACCESSOR_COMPONENT_TYPES")
-    count.isAtLeast(ACCESSOR_MIN_COUNT, "Accessor's count should be at least $ACCESSOR_MIN_COUNT")
-    type.isOneOf(ACCESSOR_TYPES, "Accessor's type should be one of $ACCESSOR_TYPES")
-    max?.size?.isOneOf(ACCESSOR_MIN_MAX_SIZES, "Accessor's max array's length should be one of $ACCESSOR_MIN_MAX_SIZES")
-    min?.size?.isOneOf(ACCESSOR_MIN_MAX_SIZES, "Accessor's min array's length should be one of $ACCESSOR_MIN_MAX_SIZES")
-    sparse?.validate()
+private fun AccessorRaw.validate(index: Int) {
+    val path = "accessors[$index]"
+    bufferView?.should(be(atLeast(MIN_REF_INDEX)), "$path.bufferView")
+    byteOffset?.should(be(atLeast(MIN_BYTE_OFFSET)), "$path.byteOffset")
+    componentType.should(be(oneOf(ACCESSOR_COMPONENT_TYPES)), "$path.componentType")
+    count.should(be(atLeast(ACCESSOR_MIN_COUNT)), "$path.count")
+    type.should(be(oneOf(ACCESSOR_TYPES)), "$path.type")
+    max?.size?.should(be(oneOf(ACCESSOR_MIN_MAX_SIZES)), "$path.max.size")
+    min?.size?.should(be(oneOf(ACCESSOR_MIN_MAX_SIZES)), "$path.min.size")
+    sparse?.validate("$path.sparse")
 }
 
-private fun SamplerRaw.validate() {
-    magFilter?.isOneOf(SAMPLER_MAG_FILTERS, "Sampler's mag filter should be one of $SAMPLER_MAG_FILTERS")
-    minFilter?.isOneOf(SAMPLER_MIN_FILTERS, "Sampler's min filter should be one of $SAMPLER_MIN_FILTERS")
-    wrapS?.isOneOf(SAMPLER_WRAPS, "Sampler's s wrap should be one of $SAMPLER_WRAPS")
-    wrapT?.isOneOf(SAMPLER_WRAPS, "Sampler's t wrap should be one of $SAMPLER_WRAPS")
+private fun SamplerRaw.validate(index: Int) {
+    val path = "samplers[$index]"
+    magFilter?.should(be(oneOf(SAMPLER_MAG_FILTERS)), "$path.magFilter")
+    minFilter?.should(be(oneOf(SAMPLER_MIN_FILTERS)), "$path.minFilter")
+    wrapS?.should(be(oneOf(SAMPLER_WRAPS)), "$path.wrapS")
+    wrapT?.should(be(oneOf(SAMPLER_WRAPS)), "$path.wrapT")
 }
 
-private fun ImageRaw.validate() {
-    mimeType?.isOneOf(IMAGE_MIME_TYPES, "Image's mime type should be one of $IMAGE_MIME_TYPES")
-    bufferView?.isAtLeast(MIN_REF_INDEX, "Image's buffer view index should be at least $MIN_REF_INDEX")
+private fun ImageRaw.validate(index: Int) {
+    val path = "images[$index]"
+    mimeType?.should(be(oneOf(IMAGE_MIME_TYPES)), "$path.mimeType")
+    bufferView?.should(be(atLeast(MIN_REF_INDEX)), "$path.bufferView")
 }
 
-private fun TextureRaw.validate() {
-    sampler?.isAtLeast(MIN_REF_INDEX, "Texture's sampler index should be at least $MIN_REF_INDEX")
-    source?.isAtLeast(MIN_REF_INDEX, "Texture's source index should be at least $MIN_REF_INDEX")
+private fun TextureRaw.validate(index: Int) {
+    val path = "textures[$index]"
+    sampler?.should(be(atLeast(MIN_REF_INDEX)), "$path.sampler")
+    source?.should(be(atLeast(MIN_REF_INDEX)), "$path.source")
 }
 
-private fun TextureInfoRaw.validate() {
-    index.isAtLeast(MIN_REF_INDEX, "Texture info's texture index should be at least $MIN_REF_INDEX")
-    texCoord?.isAtLeast(MIN_TEXCOORDS, "Texture info's texture coordinate should be at least $MIN_TEXCOORDS")
+private fun TextureInfoRaw.validate(fieldPath: String) {
+    index.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.index")
+    texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$fieldPath.texCoord")
 }
 
-private fun NormalTextureInfoRaw.validate() {
-    index.isAtLeast(MIN_REF_INDEX, "Normal texture info's texture index should be at least $MIN_REF_INDEX")
-    texCoord?.isAtLeast(MIN_TEXCOORDS, "Normal texture info's texture coordinate should be at least $MIN_TEXCOORDS")
+private fun NormalTextureInfoRaw.validate(fieldPath: String) {
+    index.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.index")
+    texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$fieldPath.texCoord")
 }
 
-private fun OcclusionTextureInfoRaw.validate() {
-    index.isAtLeast(MIN_REF_INDEX, "Occlusion texture info's texture index should be at least $MIN_REF_INDEX")
-    texCoord?.isAtLeast(MIN_TEXCOORDS, "Occlusion texture info's texture coordinate should be at least $MIN_TEXCOORDS")
-    strength?.toDouble()?.isInRange(OCCLUSION_TEXTURE_STRENGTH, "Occlusion texture info's strength should be in range $OCCLUSION_TEXTURE_STRENGTH")
+private fun OcclusionTextureInfoRaw.validate(fieldPath: String) {
+    index.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.index")
+    texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$fieldPath.texCoord")
+    strength?.toDouble()?.should(be(inRange(OCCLUSION_TEXTURE_STRENGTH)), "$fieldPath.strength")
 }
 
-private fun PbrMetallicRoughnessRaw.validate() {
-    baseColorFactor?.hasSize(COLOR_SIZE, "PbrMetallicRoughness's base color should be of size $COLOR_SIZE")
-    metallicFactor?.toDouble()?.isInRange(METALLIC_FACTOR_RANGE, "PbrMetallicRoughness's metallic factor should be in range $METALLIC_FACTOR_RANGE")
-    roughnessFactor?.toDouble()?.isInRange(ROUGHNESS_FACTOR_RANGE, "PbrMetallicRoughness's roughness factor should be in range $ROUGHNESS_FACTOR_RANGE")
+private fun PbrMetallicRoughnessRaw.validate(fieldPath: String) {
+    baseColorFactor?.should(haveSize(COLOR_SIZE), "$fieldPath.baseColorFactor")
+    metallicFactor?.toDouble()?.should(be(inRange(METALLIC_FACTOR_RANGE)), "$fieldPath.metallicFactor")
+    roughnessFactor?.toDouble()?.should(be(inRange(ROUGHNESS_FACTOR_RANGE)), "$fieldPath.roughnessFactor")
 }
 
-private fun MaterialRaw.validate() {
-    pbrMetallicRoughness?.validate()
-    normalTexture?.validate()
-    occlusionTexture?.validate()
-    emissiveTexture?.validate()
-    emissiveFactor?.hasSize(EMISSIVE_FACTOR_SIZE, "Material's emissive factor should be of size $EMISSIVE_FACTOR_SIZE")
-    alphaMode?.isOneOf(MATERIAL_ALPHA_MODES, "Material's alpha mode should be one of $MATERIAL_ALPHA_MODES")
-    alphaCutoff?.toDouble()?.isAtLeast(MIN_ALPHA_CUTOFF, "Material's alpha cutoff should be at least $MIN_ALPHA_CUTOFF")
+private fun MaterialRaw.validate(index: Int) {
+    val path = "materials[$index]"
+    pbrMetallicRoughness?.validate("$path.pbrMetallicRoughness")
+    normalTexture?.validate("$path.normalTexture")
+    occlusionTexture?.validate("$path.occlusionTexture")
+    emissiveTexture?.validate("$path.emissiveTexture")
+    emissiveFactor?.should(haveSize(EMISSIVE_FACTOR_SIZE), "$path.emissiveFactor")
+    alphaMode?.should(be(oneOf(MATERIAL_ALPHA_MODES)), "$path.alphaMode")
+    alphaCutoff?.toDouble()?.should(be(atLeast(MIN_ALPHA_CUTOFF)), "$path.alphaCutoff")
 }
 
-private fun PrimitiveRaw.validate() {
-    attributes.isNotEmpty("Primitive's primitives should not be empty")
-    indices?.isAtLeast(MIN_REF_INDEX, "Primitive's indices accessor index should be at least $MIN_REF_INDEX")
-    material?.isAtLeast(MIN_REF_INDEX, "Primitive's material index should be at least $MIN_REF_INDEX")
-    mode?.isOneOf(PRIMITIVE_MODES, "Primitive's mode should be one of $PRIMITIVE_MODES")
-    targets?.isNotEmpty("Primitive's morph targets should not be empty")?.forEach { it.isNotEmpty("Morph target not be empty") }
+private fun PrimitiveRaw.validate(fieldPath: String) {
+    attributes.should(not(be(Matchers.emptyMap())), "$fieldPath.attributes")
+    indices?.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.indices")
+    material?.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.material")
+    mode?.should(be(oneOf(PRIMITIVE_MODES)), "$fieldPath.mode")
+    targets?.should(not(be(empty())), "$fieldPath.targets")
+            ?.forEachIndexed { index, it ->
+                it.should(not(be(Matchers.emptyMap())), "$fieldPath.targets[$index]")
+            }
 }
 
-private fun MeshRaw.validate() {
-    primitives.isNotEmpty("Mesh's primitives should not be empty").forEach(PrimitiveRaw::validate)
-    weights?.isNotEmpty("Mesh's weights should not be empty")
+private fun MeshRaw.validate(index: Int) {
+    val path = "meshes[$index]"
+    primitives.should(not(be(empty())), "$path.primitives")
+            .forEachIndexed { pIndex, it -> it.validate("$path.primitives[$pIndex]") }
+    weights?.should(not(be(empty())), "$path.weights")
 }
 
-private fun OrthographicRaw.validate() {
-    zfar.toDouble().isGreaterThan(MIN_ORTHO_ZFAR, "Orthographic's zfar should be greater than $MIN_ORTHO_ZFAR")
-    znear.toDouble().isAtLeast(MIN_ORTHO_ZNEAR, "Orthographic's znear should be at least $MIN_ORTHO_ZNEAR")
+private fun OrthographicRaw.validate(fieldPath: String) {
+    zfar.toDouble().should(be(greateThan(MIN_ORTHO_ZFAR)), "$fieldPath.zfar")
+    znear.toDouble().should(be(atLeast(MIN_ORTHO_ZNEAR)), "$fieldPath.znear")
 }
 
-private fun PerspectiveRaw.validate() {
-    aspectRatio?.toDouble()?.isGreaterThan(MIN_ASPECT_RATIO, "Perspective's aspect ratio should be greater than $MIN_ASPECT_RATIO")
-    yfov.toDouble().isGreaterThan(MIN_FOV, "Perspective's fov should be greater than $MIN_FOV")
-    zfar?.toDouble()?.isGreaterThan(MIN_PERSPECTIVE_ZFAR, "Perspective's zfar should be greater than $MIN_PERSPECTIVE_ZFAR")
-    znear.toDouble().isGreaterThan(MIN_PERSPECTIVE_ZNEAR, "Perspective's znear should be greater than $MIN_PERSPECTIVE_ZNEAR")
+private fun PerspectiveRaw.validate(fieldPath: String) {
+    aspectRatio?.toDouble()?.should(be(greateThan(MIN_ASPECT_RATIO)), "$fieldPath.aspectRatio")
+    yfov.toDouble().should(be(greateThan(MIN_FOV)), "$fieldPath.yfov")
+    zfar?.toDouble()?.should(be(greateThan(MIN_PERSPECTIVE_ZFAR)), "$fieldPath.zfar")
+    znear.toDouble().should(be(greateThan(MIN_PERSPECTIVE_ZNEAR)), "$fieldPath.znear")
 }
 
-private fun CameraRaw.validate() {
-    orthographic?.validate()
-    perspective?.validate()
-    type.isOneOf(CAMERA_TYPES, "Camera's type should be one of $CAMERA_TYPES")
+private fun CameraRaw.validate(index: Int) {
+    val path = "cameras[$index]"
+    orthographic?.validate("$path.orthographic")
+    perspective?.validate("$path.perspective")
+    type.should(be(oneOf(CAMERA_TYPES)), "$path.type")
 }
 
-private fun NodeRaw.validate() {
-    camera?.isAtLeast(MIN_REF_INDEX, "Node's camera index should be at least $MIN_REF_INDEX")
-    children?.isNotEmpty("Node's children should not be empty")
-    skin?.isAtLeast(MIN_REF_INDEX, "Node's skin index should be at least $MIN_REF_INDEX")
-    matrix?.hasSize(MATRIX4_SIZE, "Node's matrix should contain $MATRIX4_SIZE elements")
-    mesh?.isAtLeast(MIN_REF_INDEX, "Node's mesh index should be at least $MIN_REF_INDEX")
-    rotation?.hasSize(QUATERNION_SIZE, "Node's rotation should contain $QUATERNION_SIZE")
-    scale?.hasSize(VECTOR3_SIZE, "Node's scale should contains $VECTOR3_SIZE elements")
-    translation?.hasSize(VECTOR3_SIZE, "Node's translation should contain $VECTOR3_SIZE elements")
-    weights?.isNotEmpty("Node's weights should not be empty")
+private fun NodeRaw.validate(index: Int) {
+    val path = "nodes[$index]"
+    camera?.should(be(atLeast(MIN_REF_INDEX)), "$path.camera")
+    children?.should(not(be(empty())), "$path.children")
+    skin?.should(be(atLeast(MIN_REF_INDEX)), "$path.skin")
+    matrix?.should(haveSize(MATRIX4_SIZE), "$path.matrix")
+    mesh?.should(be(atLeast(MIN_REF_INDEX)), "$path.mesh")
+    rotation?.should(haveSize(QUATERNION_SIZE), "$path.rotation")
+    scale?.should(haveSize(VECTOR3_SIZE), "$path.scale")
+    translation?.should(haveSize(VECTOR3_SIZE), "$path.translation")
+    weights?.should(not(be(empty())), "$path.weights")
 }
 
-private fun SkinRaw.validate() {
-    inverseBindMatrices?.isAtLeast(MIN_REF_INDEX, "Skin's inverse bind matrices index should be at least $MIN_REF_INDEX")
-    skeleton?.isAtLeast(MIN_REF_INDEX, "Skin's skeleton index shoulde be at least $MIN_REF_INDEX")
-    joints.isNotEmpty("Skin's joints should not be empty")
-            .forEach { it.isAtLeast(MIN_REF_INDEX, "Skin's joints indices should all be at least $MIN_REF_INDEX") }
+private fun SkinRaw.validate(index: Int) {
+    val path = "skins[$index]"
+    inverseBindMatrices?.should(be(atLeast(MIN_REF_INDEX)), "$path.inverseBindMatrices")
+    skeleton?.should(be(atLeast(MIN_REF_INDEX)), "$path.skeleton")
+    joints.should(not(be(empty())), "$path.joints")
+            .forEachIndexed { jIndex, it -> it.should(be(atLeast(MIN_REF_INDEX)), "$path.joints[$jIndex]") }
 }
 
-private fun AnimationTargetRaw.validate() {
-    node?.isAtLeast(MIN_REF_INDEX, "Target's node index should be at least $MIN_REF_INDEX")
-    path.isOneOf(TARGET_PATHS, "Target's path should be one of $TARGET_PATHS")
+private fun AnimationTargetRaw.validate(fieldPath: String) {
+    node?.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.node")
+    path.should(be(oneOf(TARGET_PATHS)), "$fieldPath.path")
 }
 
-private fun AnimationSamplerRaw.validate() {
-    input.isAtLeast(MIN_REF_INDEX, "Animation sampler's input index should be at least $MIN_REF_INDEX")
-    interpolation?.isOneOf(INTERPOLATION_TYPES, "Animation sampler's interpolation should be one of $INTERPOLATION_TYPES")
-    output.isAtLeast(MIN_REF_INDEX, "Animation sampler's output should be at least $MIN_REF_INDEX")
+private fun AnimationSamplerRaw.validate(fieldPath: String) {
+    input.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.input")
+    interpolation?.should(be(oneOf(INTERPOLATION_TYPES)), "$fieldPath.interpolation")
+    output.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.output")
 }
 
-private fun ChannelRaw.validate() {
-    sampler.isAtLeast(MIN_REF_INDEX, "Channel's sampler index should be at least $MIN_REF_INDEX")
-    target.validate()
+private fun ChannelRaw.validate(fieldPath: String) {
+    sampler.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.sampler")
+    target.validate("$fieldPath.target")
 }
 
-private fun AnimationRaw.validate() {
-    channels.isNotEmpty("Animation's channels should not be empty").forEach(ChannelRaw::validate)
-    samplers.isNotEmpty("Animation's samplers should not be empty").forEach(AnimationSamplerRaw::validate)
+private fun AnimationRaw.validate(index: Int) {
+    val path = "animations[$index]"
+    channels.should(not(be(empty())), "$path.channels")
+            .forEachIndexed { cIndex, it -> it.validate("$path.channels[$cIndex]") }
+    samplers.should(not(be(empty())), "$path.samplers")
+            .forEachIndexed { sIndex, it -> it.validate("$path.samplers[$sIndex]") }
 }
 
-private fun SceneRaw.validate() {
-    nodes?.isNotEmpty("Scene's nodes should not be empty")
-            ?.forEach { it.isAtLeast(MIN_REF_INDEX, "Scene's nodes indices should all be at least $MIN_REF_INDEX") }
+private fun SceneRaw.validate(index: Int) {
+    val path = "scenes[$index]"
+    nodes?.should(not(be(empty())), "$path.nodes")
+            ?.forEachIndexed { nIndex, it ->
+                it.should(be(atLeast(MIN_REF_INDEX)), "$path.nodes[$nIndex]")
+            }
 }
 
 private fun AssetRaw.validate() {
-    version.isEqualTo(REQUIRED_VERSION, "File version should be $REQUIRED_VERSION")
+    version.should(be(equalTo(REQUIRED_VERSION)), "asset.version")
 }
-
-private fun <T> T.isEqualTo(value: T, message: String) = this.apply { require(this == value) { message } }
-
-private fun <T> Comparable<T>.isAtLeast(min: T, message: String) = this.apply { require(this >= min) { message } }
-
-private fun <T> Comparable<T>.isGreaterThan(min: T, message: String) = this.apply { require(this > min) { message } }
-
-private fun <T : Comparable<T>> T.isInRange(range: ClosedRange<T>, message: String) = this.apply { require(this in range) { message } }
-
-private fun <T> T.isOneOf(array: Array<T>, message: String) = this.apply { require(array.contains(this)) { message } }
-
-private fun Collection<*>.hasSize(size: Int, message: String) = this.apply { require(this.size == size) { message } }
-
-private fun <T> Collection<T>.isNotEmpty(message: String) = this.apply { require(this.isNotEmpty()) { message } }
-
-private fun <K, V> Map<K, V>.isNotEmpty(message: String) = this.apply { require(this.isNotEmpty()) { message } }
