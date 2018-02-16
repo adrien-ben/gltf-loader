@@ -53,6 +53,8 @@ private val CAMERA_TYPES = listOf("perspective", "orthographic")
 private val TARGET_PATHS = listOf("translation", "rotation", "scale", "weights")
 private val INTERPOLATION_TYPES = listOf("LINEAR", "STEP", "CUBICSPLINE")
 
+private fun Int.shouldBeAValidRef(fieldName: String) = should(be(atLeast(MIN_REF_INDEX)), fieldName)
+
 /**
  * This class is responsible for validating the models loaded from the json.
  * At this point, is the json was successfully loaded we know that required
@@ -93,7 +95,7 @@ private fun BufferRaw.validate(index: Int) {
 
 private fun BufferViewRaw.validate(index: Int) {
     val path = "bufferViews[$index]"
-    buffer.should(be(atLeast(MIN_REF_INDEX)), "$path.buffer")
+    buffer.shouldBeAValidRef("$path.buffer")
     byteOffset?.should(be(atLeast(MIN_BYTE_OFFSET)), "$path.byteOffset")
     byteLength.should(be(atLeast(MIN_BUFFER_LENGTH)), "$path.byteLength")
     byteStride?.should(be(inRange(RANGE_BYTE_STRIDE)), "$path.byteStride")
@@ -101,13 +103,13 @@ private fun BufferViewRaw.validate(index: Int) {
 }
 
 private fun IndicesRaw.validate(fieldPath: String) {
-    bufferView.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.bufferView")
+    bufferView.shouldBeAValidRef("$fieldPath.bufferView")
     byteOffset?.should(be(atLeast(MIN_BYTE_OFFSET)), "$fieldPath.byteOffset")
     componentType.should(be(oneOf(INDICES_COMPONENT_TYPES)), "$fieldPath.componentType")
 }
 
 private fun ValuesRaw.validate(fieldPath: String) {
-    bufferView.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.bufferView")
+    bufferView.shouldBeAValidRef("$fieldPath.bufferView")
     byteOffset?.should(be(atLeast(MIN_BYTE_OFFSET)), "$fieldPath.byteOffset")
 }
 
@@ -119,7 +121,7 @@ private fun SparseRaw.validate(fieldPath: String) {
 
 private fun AccessorRaw.validate(index: Int) {
     val path = "accessors[$index]"
-    bufferView?.should(be(atLeast(MIN_REF_INDEX)), "$path.bufferView")
+    bufferView?.shouldBeAValidRef("$path.bufferView")
     byteOffset?.should(be(atLeast(MIN_BYTE_OFFSET)), "$path.byteOffset")
     componentType.should(be(oneOf(ACCESSOR_COMPONENT_TYPES)), "$path.componentType")
     count.should(be(atLeast(ACCESSOR_MIN_COUNT)), "$path.count")
@@ -140,27 +142,27 @@ private fun SamplerRaw.validate(index: Int) {
 private fun ImageRaw.validate(index: Int) {
     val path = "images[$index]"
     mimeType?.should(be(oneOf(IMAGE_MIME_TYPES)), "$path.mimeType")
-    bufferView?.should(be(atLeast(MIN_REF_INDEX)), "$path.bufferView")
+    bufferView?.shouldBeAValidRef("$path.bufferView")
 }
 
 private fun TextureRaw.validate(index: Int) {
     val path = "textures[$index]"
-    sampler?.should(be(atLeast(MIN_REF_INDEX)), "$path.sampler")
-    source?.should(be(atLeast(MIN_REF_INDEX)), "$path.source")
+    sampler?.shouldBeAValidRef("$path.sampler")
+    source?.shouldBeAValidRef("$path.source")
 }
 
 private fun TextureInfoRaw.validate(textureFieldPath: String) {
-    index.should(be(atLeast(MIN_REF_INDEX)), "$textureFieldPath.index")
+    index.shouldBeAValidRef("$textureFieldPath.index")
     texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$textureFieldPath.texCoord")
 }
 
 private fun NormalTextureInfoRaw.validate(normalFieldPath: String) {
-    index.should(be(atLeast(MIN_REF_INDEX)), "$normalFieldPath.index")
+    index.shouldBeAValidRef("$normalFieldPath.index")
     texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$normalFieldPath.texCoord")
 }
 
 private fun OcclusionTextureInfoRaw.validate(occlusionFieldPath: String) {
-    index.should(be(atLeast(MIN_REF_INDEX)), "$occlusionFieldPath.index")
+    index.shouldBeAValidRef("$occlusionFieldPath.index")
     texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$occlusionFieldPath.texCoord")
     strength?.toDouble()?.should(be(inRange(OCCLUSION_TEXTURE_STRENGTH)), "$occlusionFieldPath.strength")
 }
@@ -184,13 +186,11 @@ private fun MaterialRaw.validate(index: Int) {
 
 private fun PrimitiveRaw.validate(fieldPath: String) {
     attributes.should(not(be(anEmptyMap())), "$fieldPath.attributes")
-    indices?.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.indices")
-    material?.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.material")
+    indices?.shouldBeAValidRef("$fieldPath.indices")
+    material?.shouldBeAValidRef("$fieldPath.material")
     mode?.should(be(oneOf(PRIMITIVE_MODES)), "$fieldPath.mode")
     targets?.should(not(be(empty())), "$fieldPath.targets")
-            ?.forEachIndexed { index, it ->
-                it.should(not(be(anEmptyMap())), "$fieldPath.targets[$index]")
-            }
+            ?.forEachIndexed { index, it -> it.should(not(be(anEmptyMap())), "$fieldPath.targets[$index]") }
 }
 
 private fun MeshRaw.validate(index: Int) {
@@ -221,11 +221,11 @@ private fun CameraRaw.validate(index: Int) {
 
 private fun NodeRaw.validate(index: Int) {
     val path = "nodes[$index]"
-    camera?.should(be(atLeast(MIN_REF_INDEX)), "$path.camera")
+    camera?.shouldBeAValidRef("$path.camera")
     children?.should(not(be(empty())), "$path.children")
-    skin?.should(be(atLeast(MIN_REF_INDEX)), "$path.skin")
+    skin?.shouldBeAValidRef("$path.skin")
     matrix?.should(haveSize(MATRIX4_SIZE), "$path.matrix")
-    mesh?.should(be(atLeast(MIN_REF_INDEX)), "$path.mesh")
+    mesh?.shouldBeAValidRef("$path.mesh")
     rotation?.should(haveSize(QUATERNION_SIZE), "$path.rotation")
     scale?.should(haveSize(VECTOR3_SIZE), "$path.scale")
     translation?.should(haveSize(VECTOR3_SIZE), "$path.translation")
@@ -234,25 +234,25 @@ private fun NodeRaw.validate(index: Int) {
 
 private fun SkinRaw.validate(index: Int) {
     val path = "skins[$index]"
-    inverseBindMatrices?.should(be(atLeast(MIN_REF_INDEX)), "$path.inverseBindMatrices")
-    skeleton?.should(be(atLeast(MIN_REF_INDEX)), "$path.skeleton")
+    inverseBindMatrices?.shouldBeAValidRef("$path.inverseBindMatrices")
+    skeleton?.shouldBeAValidRef("$path.skeleton")
     joints.should(not(be(empty())), "$path.joints")
-            .forEachIndexed { jIndex, it -> it.should(be(atLeast(MIN_REF_INDEX)), "$path.joints[$jIndex]") }
+            .forEachIndexed { jIndex, it -> it.shouldBeAValidRef("$path.joints[$jIndex]") }
 }
 
 private fun AnimationTargetRaw.validate(fieldPath: String) {
-    node?.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.node")
+    node?.shouldBeAValidRef("$fieldPath.node")
     path.should(be(oneOf(TARGET_PATHS)), "$fieldPath.path")
 }
 
 private fun AnimationSamplerRaw.validate(fieldPath: String) {
-    input.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.input")
+    input.shouldBeAValidRef("$fieldPath.input")
     interpolation?.should(be(oneOf(INTERPOLATION_TYPES)), "$fieldPath.interpolation")
-    output.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.output")
+    output.shouldBeAValidRef("$fieldPath.output")
 }
 
 private fun ChannelRaw.validate(fieldPath: String) {
-    sampler.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.sampler")
+    sampler.shouldBeAValidRef("$fieldPath.sampler")
     target.validate("$fieldPath.target")
 }
 
@@ -267,9 +267,7 @@ private fun AnimationRaw.validate(index: Int) {
 private fun SceneRaw.validate(index: Int) {
     val path = "scenes[$index]"
     nodes?.should(not(be(empty())), "$path.nodes")
-            ?.forEachIndexed { nIndex, it ->
-                it.should(be(atLeast(MIN_REF_INDEX)), "$path.nodes[$nIndex]")
-            }
+            ?.forEachIndexed { nIndex, it -> it.shouldBeAValidRef("$path.nodes[$nIndex]") }
 }
 
 private fun AssetRaw.validate() {
