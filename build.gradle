@@ -9,7 +9,7 @@ buildscript {
     }
 }
 
-group 'com.adrien.tools'
+group 'com.adrienben.tools'
 version '1.0.0-SNAPSHOT'
 
 apply plugin: 'kotlin'

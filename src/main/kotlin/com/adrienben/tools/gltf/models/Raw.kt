@@ -1,4 +1,4 @@
-package com.adrien.tools.gltf.models
+package com.adrienben.tools.gltf.models
 
 internal typealias Extensions = Map<String, Any>
 

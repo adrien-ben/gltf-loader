@@ -1,7 +1,7 @@
-package com.adrien.tools.gltf.models
+package com.adrienben.tools.gltf.models
 
-import com.adrien.tools.gltf.Loader
-import com.adrien.tools.gltf.Mapper
+import com.adrienben.tools.gltf.Loader
+import com.adrienben.tools.gltf.Mapper
 
 /**
  * RGBA color.

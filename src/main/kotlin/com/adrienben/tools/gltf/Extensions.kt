@@ -1,4 +1,4 @@
-package com.adrien.tools.gltf
+package com.adrienben.tools.gltf
 
 import java.util.*
 

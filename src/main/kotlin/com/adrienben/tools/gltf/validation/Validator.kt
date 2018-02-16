@@ -1,16 +1,16 @@
-package com.adrien.tools.gltf.validation
+package com.adrienben.tools.gltf.validation
 
-import com.adrien.tools.gltf.models.*
-import com.adrien.tools.gltf.validation.Matchers.anEmptyMap
-import com.adrien.tools.gltf.validation.Matchers.atLeast
-import com.adrien.tools.gltf.validation.Matchers.be
-import com.adrien.tools.gltf.validation.Matchers.empty
-import com.adrien.tools.gltf.validation.Matchers.equalTo
-import com.adrien.tools.gltf.validation.Matchers.greaterThan
-import com.adrien.tools.gltf.validation.Matchers.haveSize
-import com.adrien.tools.gltf.validation.Matchers.inRange
-import com.adrien.tools.gltf.validation.Matchers.not
-import com.adrien.tools.gltf.validation.Matchers.oneOf
+import com.adrienben.tools.gltf.models.*
+import com.adrienben.tools.gltf.validation.Matchers.anEmptyMap
+import com.adrienben.tools.gltf.validation.Matchers.atLeast
+import com.adrienben.tools.gltf.validation.Matchers.be
+import com.adrienben.tools.gltf.validation.Matchers.empty
+import com.adrienben.tools.gltf.validation.Matchers.equalTo
+import com.adrienben.tools.gltf.validation.Matchers.greaterThan
+import com.adrienben.tools.gltf.validation.Matchers.haveSize
+import com.adrienben.tools.gltf.validation.Matchers.inRange
+import com.adrienben.tools.gltf.validation.Matchers.not
+import com.adrienben.tools.gltf.validation.Matchers.oneOf
 
 private const val REQUIRED_VERSION = "2.0"
 

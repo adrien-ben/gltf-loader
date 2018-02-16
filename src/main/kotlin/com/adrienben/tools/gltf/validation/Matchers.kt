@@ -1,4 +1,4 @@
-package com.adrien.tools.gltf.validation
+package com.adrienben.tools.gltf.validation
 
 /**
  * Base interface for matchers.

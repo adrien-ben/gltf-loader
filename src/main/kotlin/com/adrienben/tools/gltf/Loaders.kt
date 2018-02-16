@@ -1,10 +1,10 @@
-package com.adrien.tools.gltf
+package com.adrienben.tools.gltf
 
-import com.adrien.tools.gltf.models.BufferRaw
-import com.adrien.tools.gltf.models.GltfAssetRaw
-import com.adrien.tools.gltf.models.GltfRaw
-import com.adrien.tools.gltf.models.MorphTargetRaw
-import com.adrien.tools.gltf.validation.Validator
+import com.adrienben.tools.gltf.models.BufferRaw
+import com.adrienben.tools.gltf.models.GltfAssetRaw
+import com.adrienben.tools.gltf.models.GltfRaw
+import com.adrienben.tools.gltf.models.MorphTargetRaw
+import com.adrienben.tools.gltf.validation.Validator
 import com.beust.klaxon.Converter
 import com.beust.klaxon.JsonValue
 import com.beust.klaxon.Klaxon

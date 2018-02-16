@@ -1,6 +1,6 @@
-package com.adrien.tools.gltf
+package com.adrienben.tools.gltf
 
-import com.adrien.tools.gltf.models.*
+import com.adrienben.tools.gltf.models.*
 
 /**
  * [GltfAsset] mapper.
