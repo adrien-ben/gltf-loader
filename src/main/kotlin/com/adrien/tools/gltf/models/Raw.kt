@@ -1,12 +1,8 @@
-package com.adrien.tools.gltf
-
-import java.util.*
+package com.adrien.tools.gltf.models
 
 internal typealias Extensions = Map<String, Any>
 
 internal typealias Extras = Any
-
-private val DATA_URI_REGEX = Regex("data:.*(?:;base64)?,(.*)")
 
 internal class BufferRaw(
         val uri: String? = null,
@@ -282,13 +278,3 @@ internal class GltfAssetRaw(
 )
 
 internal class GltfRaw(val gltfAssetRaw: GltfAssetRaw, val data: List<ByteArray>)
-
-/**
- * String extensions to decode a data URI if it matches the data uri pattern.
- *
- * It returns a [ByteArray] or null if the string does not match the required pattern.
- */
-internal fun String.decodeDataUri(): ByteArray? {
-    val base64 = DATA_URI_REGEX.find(this)?.groupValues?.get(1) ?: return null
-    return Base64.getDecoder().decode(base64)
-}

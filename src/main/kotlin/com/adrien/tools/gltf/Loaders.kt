@@ -1,5 +1,10 @@
 package com.adrien.tools.gltf
 
+import com.adrien.tools.gltf.models.BufferRaw
+import com.adrien.tools.gltf.models.GltfAssetRaw
+import com.adrien.tools.gltf.models.GltfRaw
+import com.adrien.tools.gltf.models.MorphTargetRaw
+import com.adrien.tools.gltf.validation.Validator
 import com.beust.klaxon.Converter
 import com.beust.klaxon.JsonValue
 import com.beust.klaxon.Klaxon
@@ -33,14 +38,14 @@ private val morphTargetConverter = object : Converter<MorphTargetRaw> {
 }
 
 /**
- * Read byte data of a buffer.
+ * Read byte models of a buffer.
  */
 private fun BufferRaw.getData(dir: String): ByteArray {
     return uri
             ?.decodeDataUri()
             ?: File(dir, uri).readBytes()
             ?: throw IllegalArgumentException(
-                    "Buffer data is not embedded and does not reference a .bin file that could be found")
+                    "Buffer models is not embedded and does not reference a .bin file that could be found")
 }
 
 /**

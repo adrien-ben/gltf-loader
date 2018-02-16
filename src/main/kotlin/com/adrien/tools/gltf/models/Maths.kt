@@ -1,4 +1,4 @@
-package com.adrien.tools.gltf
+package com.adrien.tools.gltf.models
 
 import kotlin.math.sqrt
 

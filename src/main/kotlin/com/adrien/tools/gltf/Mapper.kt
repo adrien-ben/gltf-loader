@@ -1,5 +1,7 @@
 package com.adrien.tools.gltf
 
+import com.adrien.tools.gltf.models.*
+
 /**
  * [GltfAsset] mapper.
  *
@@ -103,7 +105,8 @@ private fun IndicesRaw.map(bufferViews: List<GltfBufferView>) = GltfIndices(
         GltfComponentType.fromCode(componentType)
 )
 
-private fun ValuesRaw.map(bufferViews: List<GltfBufferView>) = GltfValues(bufferViews[bufferView], byteOffset ?: 0)
+private fun ValuesRaw.map(bufferViews: List<GltfBufferView>) = GltfValues(bufferViews[bufferView], byteOffset
+        ?: 0)
 
 private fun SparseRaw.map(bufferViews: List<GltfBufferView>) = GltfSparse(count, indices.map(bufferViews), values.map(bufferViews))
 
@@ -146,7 +149,8 @@ private fun TextureRaw.map(index: Int, samplers: List<GltfSampler>, images: List
         name
 )
 
-private fun TextureInfoRaw.map(textures: List<GltfTexture>) = GltfTextureInfo(textures[index], texCoord ?: 0)
+private fun TextureInfoRaw.map(textures: List<GltfTexture>) = GltfTextureInfo(textures[index], texCoord
+        ?: 0)
 
 private fun NormalTextureInfoRaw.map(textures: List<GltfTexture>) = GltfNormalTextureInfo(
         textures[index], texCoord ?: 0, scale?.let(Number::toFloat) ?: 1f

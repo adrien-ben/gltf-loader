@@ -1,4 +1,4 @@
-package com.adrien.tools.gltf
+package com.adrien.tools.gltf.models
 
 /**
  * Component types with their byte size and their original constant value.

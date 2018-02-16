@@ -1,4 +1,7 @@
-package com.adrien.tools.gltf
+package com.adrien.tools.gltf.models
+
+import com.adrien.tools.gltf.Loader
+import com.adrien.tools.gltf.Mapper
 
 /**
  * RGBA color.
@@ -22,7 +25,7 @@ class GltfColor(val r: Float = 1f, val g: Float = 1f, val b: Float = 1f, val a: 
 /**
  * Pointer to byte buffer. [uri] can reference an external file, in that case
  * it will contain the path of the file relative the current .glsl file. It can
- * also reference embedded base64 data.
+ * also reference embedded base64 models.
  */
 class GltfBuffer(
         val index: Int,
@@ -63,7 +66,7 @@ class GltfValues(
 )
 
 /**
- * Sparse provide information on how to generate sparse data of a buffer.
+ * Sparse provide information on how to generate sparse models of a buffer.
  * [indices] contains the indices of the sparse elements and [values] the
  * values to use.
  */
@@ -74,9 +77,9 @@ class GltfSparse(
 )
 
 /**
- * Accessor provides type information about the data contained in a
+ * Accessor provides type information about the models contained in a
  * buffer view. If an accessor does not point to a buffer view then
- * the data must be generated from the sparse accessor.
+ * the models must be generated from the sparse accessor.
  */
 class GltfAccessor(
         val index: Int,
@@ -109,7 +112,7 @@ class GltfSampler(
  * Image descriptor.
  *
  * [uri] can reference an external file, in that case it will contain the path of
- * the file relative the current .glsl file. [uri] can also contain a data uri, in
+ * the file relative the current .glsl file. [uri] can also contain a models uri, in
  * this case, the uri will be decoded and its content will be stored in [data].
  *
  * If [bufferView] is present use it instead of the uri.
@@ -124,7 +127,7 @@ class GltfImage(
 )
 
 /**
- * Texture data.
+ * Texture models.
  */
 class GltfTexture(
         val index: Int,
@@ -160,7 +163,7 @@ class GltfOcclusionTextureInfo(
 )
 
 /**
- * PBR material data.
+ * PBR material models.
  */
 class GltfPbrMetallicRoughness(
         val baseColorFactor: GltfColor = GltfColor(),
