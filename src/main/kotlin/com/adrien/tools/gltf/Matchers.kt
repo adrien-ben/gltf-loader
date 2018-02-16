@@ -181,9 +181,8 @@ class BeMatcher<in T>(private val matcher: Matcher<T>) : Matcher<T> {
     /**
      * Test that [value] matches [matcher].
      */
-    override fun matches(value: T): Result {
-        val result = matcher.matches(value)
-        return Result(result.success, "be ${result.message}")
+    override fun matches(value: T) = matcher.matches(value).let {
+        Result(it.success, "be ${it.message}")
     }
 }
 
@@ -195,8 +194,7 @@ class NotMatcher<in T>(private val matcher: Matcher<T>) : Matcher<T> {
     /**
      * Test that [value] does not match [matcher].
      */
-    override fun matches(value: T): Result {
-        val result = matcher.matches(value)
-        return Result(!result.success, "not ${result.message}")
+    override fun matches(value: T) = matcher.matches(value).let {
+        Result(!it.success, "not ${it.message}")
     }
 }
