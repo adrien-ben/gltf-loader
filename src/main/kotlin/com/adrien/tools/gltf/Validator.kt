@@ -1,10 +1,11 @@
 package com.adrien.tools.gltf
 
+import com.adrien.tools.gltf.Matchers.anEmptyMap
 import com.adrien.tools.gltf.Matchers.atLeast
 import com.adrien.tools.gltf.Matchers.be
 import com.adrien.tools.gltf.Matchers.empty
 import com.adrien.tools.gltf.Matchers.equalTo
-import com.adrien.tools.gltf.Matchers.greateThan
+import com.adrien.tools.gltf.Matchers.greaterThan
 import com.adrien.tools.gltf.Matchers.haveSize
 import com.adrien.tools.gltf.Matchers.inRange
 import com.adrien.tools.gltf.Matchers.not
@@ -52,11 +53,6 @@ private val TARGET_PATHS = listOf("translation", "rotation", "scale", "weights")
 private val INTERPOLATION_TYPES = listOf("LINEAR", "STEP", "CUBICSPLINE")
 
 /**
- * Exception thrown is case of validation error.
- */
-private class ValidationException(message: String) : Throwable(message)
-
-/**
  * This class is responsible for validating the data loaded from the json.
  * At this point, is the json was successfully loaded we know that required
  * data is present. This class then validates data consistency.
@@ -66,7 +62,7 @@ internal class Validator {
     /**
      * Validate the provided asset.
      *
-     * @throws ValidationException if the asset is not valid.
+     * @throws AssertionError if the asset is not valid.
      */
     fun validate(gltfRaw: GltfRaw): GltfRaw {
         gltfRaw.gltfAssetRaw.apply {
@@ -152,20 +148,20 @@ private fun TextureRaw.validate(index: Int) {
     source?.should(be(atLeast(MIN_REF_INDEX)), "$path.source")
 }
 
-private fun TextureInfoRaw.validate(fieldPath: String) {
-    index.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.index")
-    texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$fieldPath.texCoord")
+private fun TextureInfoRaw.validate(textureFieldPath: String) {
+    index.should(be(atLeast(MIN_REF_INDEX)), "$textureFieldPath.index")
+    texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$textureFieldPath.texCoord")
 }
 
-private fun NormalTextureInfoRaw.validate(fieldPath: String) {
-    index.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.index")
-    texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$fieldPath.texCoord")
+private fun NormalTextureInfoRaw.validate(normalFieldPath: String) {
+    index.should(be(atLeast(MIN_REF_INDEX)), "$normalFieldPath.index")
+    texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$normalFieldPath.texCoord")
 }
 
-private fun OcclusionTextureInfoRaw.validate(fieldPath: String) {
-    index.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.index")
-    texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$fieldPath.texCoord")
-    strength?.toDouble()?.should(be(inRange(OCCLUSION_TEXTURE_STRENGTH)), "$fieldPath.strength")
+private fun OcclusionTextureInfoRaw.validate(occlusionFieldPath: String) {
+    index.should(be(atLeast(MIN_REF_INDEX)), "$occlusionFieldPath.index")
+    texCoord?.should(be(atLeast(MIN_TEXCOORDS)), "$occlusionFieldPath.texCoord")
+    strength?.toDouble()?.should(be(inRange(OCCLUSION_TEXTURE_STRENGTH)), "$occlusionFieldPath.strength")
 }
 
 private fun PbrMetallicRoughnessRaw.validate(fieldPath: String) {
@@ -186,13 +182,13 @@ private fun MaterialRaw.validate(index: Int) {
 }
 
 private fun PrimitiveRaw.validate(fieldPath: String) {
-    attributes.should(not(be(Matchers.emptyMap())), "$fieldPath.attributes")
+    attributes.should(not(be(anEmptyMap())), "$fieldPath.attributes")
     indices?.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.indices")
     material?.should(be(atLeast(MIN_REF_INDEX)), "$fieldPath.material")
     mode?.should(be(oneOf(PRIMITIVE_MODES)), "$fieldPath.mode")
     targets?.should(not(be(empty())), "$fieldPath.targets")
             ?.forEachIndexed { index, it ->
-                it.should(not(be(Matchers.emptyMap())), "$fieldPath.targets[$index]")
+                it.should(not(be(anEmptyMap())), "$fieldPath.targets[$index]")
             }
 }
 
@@ -204,15 +200,15 @@ private fun MeshRaw.validate(index: Int) {
 }
 
 private fun OrthographicRaw.validate(fieldPath: String) {
-    zfar.toDouble().should(be(greateThan(MIN_ORTHO_ZFAR)), "$fieldPath.zfar")
+    zfar.toDouble().should(be(greaterThan(MIN_ORTHO_ZFAR)), "$fieldPath.zfar")
     znear.toDouble().should(be(atLeast(MIN_ORTHO_ZNEAR)), "$fieldPath.znear")
 }
 
 private fun PerspectiveRaw.validate(fieldPath: String) {
-    aspectRatio?.toDouble()?.should(be(greateThan(MIN_ASPECT_RATIO)), "$fieldPath.aspectRatio")
-    yfov.toDouble().should(be(greateThan(MIN_FOV)), "$fieldPath.yfov")
-    zfar?.toDouble()?.should(be(greateThan(MIN_PERSPECTIVE_ZFAR)), "$fieldPath.zfar")
-    znear.toDouble().should(be(greateThan(MIN_PERSPECTIVE_ZNEAR)), "$fieldPath.znear")
+    aspectRatio?.toDouble()?.should(be(greaterThan(MIN_ASPECT_RATIO)), "$fieldPath.aspectRatio")
+    yfov.toDouble().should(be(greaterThan(MIN_FOV)), "$fieldPath.yfov")
+    zfar?.toDouble()?.should(be(greaterThan(MIN_PERSPECTIVE_ZFAR)), "$fieldPath.zfar")
+    znear.toDouble().should(be(greaterThan(MIN_PERSPECTIVE_ZNEAR)), "$fieldPath.znear")
 }
 
 private fun CameraRaw.validate(index: Int) {

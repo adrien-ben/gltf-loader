@@ -17,6 +17,19 @@ interface Matcher<in T> {
 class Result(val success: Boolean, val message: String)
 
 /**
+ * Infix extension that checks the receiver against [matcher].
+ *
+ * [fieldName] will be append at the beginning of the error message
+ * int case of failure.
+ *
+ * @throws AssertionError if the test does not pass.
+ */
+fun <T> T.should(matcher: Matcher<T>, fieldName: String = "field") = this.apply {
+    val result = matcher.matches(this)
+    if (!result.success) throw AssertionError("$fieldName is $this but should ${result.message}")
+}
+
+/**
  * Utility object to get matchers.
  */
 object Matchers {
@@ -34,7 +47,7 @@ object Matchers {
     /**
      * Return an instance of [GreaterThanMatcher].
      */
-    fun <T : Comparable<T>> greateThan(min: T) = GreaterThanMatcher(min)
+    fun <T : Comparable<T>> greaterThan(min: T) = GreaterThanMatcher(min)
 
     /**
      * Return an instance of [InRangeMatcher].
@@ -59,7 +72,7 @@ object Matchers {
     /**
      * Return an instance of [EmptyMapMatcher].
      */
-    fun <T : Map<*, *>> emptyMap() = EmptyMapMatcher<T>()
+    fun <T : Map<*, *>> anEmptyMap() = EmptyMapMatcher<T>()
 
     /**
      * Return an instance of [BeMatcher].
@@ -160,31 +173,30 @@ class HaveSizeMatcher<in T : Collection<*>>(private val size: Int) : Matcher<T> 
     override fun matches(value: T) = Result(value.size == size, "have size $size")
 }
 
+/**
+ * Matcher to check that another matcher matches. It is just use to compose matchers as sentences.
+ */
 class BeMatcher<in T>(private val matcher: Matcher<T>) : Matcher<T> {
 
+    /**
+     * Test that [value] matches [matcher].
+     */
     override fun matches(value: T): Result {
         val result = matcher.matches(value)
         return Result(result.success, "be ${result.message}")
     }
 }
 
+/**
+ * Matcher to check that another matcher does not match.
+ */
 class NotMatcher<in T>(private val matcher: Matcher<T>) : Matcher<T> {
 
+    /**
+     * Test that [value] does not match [matcher].
+     */
     override fun matches(value: T): Result {
         val result = matcher.matches(value)
         return Result(!result.success, "not ${result.message}")
     }
-}
-
-/**
- * Infix extension that checks the receiver against [matcher].
- *
- * [fieldName] will be append at the beginning of the error message
- * int case of failure.
- *
- * @throws AssertionError if the test does not pass.
- */
-fun <T> T.should(matcher: Matcher<T>, fieldName: String = "field") = this.apply {
-    val result = matcher.matches(this)
-    if (!result.success) throw AssertionError("$fieldName is $this but should ${result.message}")
 }
