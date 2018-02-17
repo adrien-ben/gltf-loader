@@ -135,17 +135,12 @@ internal class MaterialRaw(
         val extras: Extras? = null
 )
 
-/**
- * TODO: Remove this when Klaxon can deserialize nested collections
- */
-internal class MorphTargetRaw(map: Map<String, Int>) : Map<String, Int> by map
-
 internal class PrimitiveRaw(
         val attributes: Map<String, Int>,
         val indices: Int? = null,
         val material: Int? = null,
         val mode: Int? = null,
-        val targets: List<MorphTargetRaw>? = null,
+        val targets: List<Map<String, Int>>? = null,
         val extensions: Extensions? = null,
         val extras: Extras? = null
 )

@@ -3,17 +3,12 @@ package com.adrienben.tools.gltf
 import com.adrienben.tools.gltf.models.BufferRaw
 import com.adrienben.tools.gltf.models.GltfAssetRaw
 import com.adrienben.tools.gltf.models.GltfRaw
-import com.adrienben.tools.gltf.models.MorphTargetRaw
 import com.adrienben.tools.gltf.validation.Validator
-import com.beust.klaxon.Converter
-import com.beust.klaxon.JsonValue
 import com.beust.klaxon.Klaxon
 import java.io.File
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 private const val GLB_HEADER_LENGTH = 12
 
@@ -22,20 +17,6 @@ private const val GLB_MAGIC_FLAG = 0x46546C67
 private const val GLB_JSON_CHUNK_TYPE = 0x4E4F534A
 
 private const val GLB_BIN_CHUNK_TYPE = 0x004E4942
-
-// TODO: Remove this when Klaxon can deserialize nested collections
-private val morphTargetConverter = object : Converter<MorphTargetRaw> {
-    override fun fromJson(jv: JsonValue): MorphTargetRaw {
-        return MorphTargetRaw(jv.obj?.mapValues { (_, value) -> value as Int } ?: emptyMap())
-    }
-
-    /**
-     * To implement when (if?) gltf exports are supported by the library
-     */
-    override fun toJson(value: MorphTargetRaw): String? {
-        throw NotImplementedError("Morph target serialization not implemented")
-    }
-}
 
 /**
  * Read byte models of a buffer.
@@ -59,7 +40,7 @@ internal interface Loader {
     fun load(path: String): GltfRaw?
 
     /**
-     * Companion factory
+     * Companion factory.
      */
     companion object Factory {
 
@@ -85,7 +66,6 @@ private class GltfLoader : Loader {
     override fun load(path: String): GltfRaw? {
         val file = File(path)
         val assetRaw = Klaxon()
-                .converter(morphTargetConverter)
                 .parse<GltfAssetRaw>(file)
                 ?: return null
 
@@ -112,7 +92,6 @@ private class GlbLoader : Loader {
 
             val firstChunkHeader = it.readChunkHeader().apply { validate(GLB_JSON_CHUNK_TYPE) }
             val assetRaw = Klaxon()
-                    .converter(morphTargetConverter)
                     .parse<GltfAssetRaw>(it.readString(firstChunkHeader.length))
                     ?: return null
 
