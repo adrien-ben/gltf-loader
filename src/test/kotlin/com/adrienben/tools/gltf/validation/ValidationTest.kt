@@ -430,4 +430,132 @@ class ValidationTest {
                                 source = -1 // tested error
                         )))))
     }
+
+    @Test(expected = AssertionError::class)
+    fun itShouldFailOnWrongMaterialPbrColor() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = AssetRaw(
+                                version = "2.0"),
+                        materials = listOf(MaterialRaw(
+                                pbrMetallicRoughness = PbrMetallicRoughnessRaw(
+                                        baseColorFactor = emptyList() // tested error
+                                ))))))
+    }
+
+    @Test(expected = AssertionError::class)
+    fun itShouldFailOnWrongMaterialPbrColorTextureIndex() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = AssetRaw(
+                                version = "2.0"),
+                        materials = listOf(MaterialRaw(
+                                pbrMetallicRoughness = PbrMetallicRoughnessRaw(
+                                        baseColorTexture = TextureInfoRaw(
+                                                index = -1 // tested error
+                                        )
+                                ))))))
+    }
+
+    @Test(expected = AssertionError::class)
+    fun itShouldFailOnWrongMaterialPbrColorTextureCoord() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = AssetRaw(
+                                version = "2.0"),
+                        materials = listOf(MaterialRaw(
+                                pbrMetallicRoughness = PbrMetallicRoughnessRaw(
+                                        baseColorTexture = TextureInfoRaw(
+                                                index = 0,
+                                                texCoord = -1 // tested error
+                                        )
+                                ))))))
+    }
+
+    @Test(expected = AssertionError::class)
+    fun itShouldFailOnWrongMaterialPbrMetallic() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = AssetRaw(
+                                version = "2.0"),
+                        materials = listOf(MaterialRaw(
+                                pbrMetallicRoughness = PbrMetallicRoughnessRaw(
+                                        metallicFactor = 2 // tested error
+                                ))))))
+    }
+
+    @Test(expected = AssertionError::class)
+    fun itShouldFailOnWrongMaterialPbrRoughness() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = AssetRaw(
+                                version = "2.0"),
+                        materials = listOf(MaterialRaw(
+                                pbrMetallicRoughness = PbrMetallicRoughnessRaw(
+                                        roughnessFactor = 2 // tested error
+                                ))))))
+    }
+
+    @Test(expected = AssertionError::class)
+    fun itShouldFailOnWrongMaterialPbrMetallicRoughnessTextureIndex() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = AssetRaw(
+                                version = "2.0"),
+                        materials = listOf(MaterialRaw(
+                                pbrMetallicRoughness = PbrMetallicRoughnessRaw(
+                                        metallicRoughnessTexture = TextureInfoRaw(
+                                                index = -1 // tested error
+                                        )
+                                ))))))
+    }
+
+    @Test(expected = AssertionError::class)
+    fun itShouldFailOnWrongMaterialPbrMetallicRoughnessTextureCoord() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = AssetRaw(
+                                version = "2.0"),
+                        materials = listOf(MaterialRaw(
+                                pbrMetallicRoughness = PbrMetallicRoughnessRaw(
+                                        metallicRoughnessTexture = TextureInfoRaw(
+                                                index = 0,
+                                                texCoord = -1 // tested error
+                                        )
+                                ))))))
+    }
+
+    @Test(expected = AssertionError::class)
+    fun itShouldFailOnWrongMaterialEmissiveTextureIndex() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = AssetRaw(
+                                version = "2.0"),
+                        materials = listOf(MaterialRaw(
+                                emissiveTexture = TextureInfoRaw(
+                                        index = -1 // tested error
+                                ))))))
+    }
+
+    @Test(expected = AssertionError::class)
+    fun itShouldFailOnWrongMaterialEmissiveTextureCoord() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = AssetRaw(
+                                version = "2.0"),
+                        materials = listOf(MaterialRaw(
+                                emissiveTexture = TextureInfoRaw(
+                                        index = 0,
+                                        texCoord = -1 // tested error
+                                ))))))
+    }
 }

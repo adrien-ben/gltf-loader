@@ -176,8 +176,10 @@ private fun OcclusionTextureInfoRaw.validate(occlusionFieldPath: String) {
 
 private fun PbrMetallicRoughnessRaw.validate(fieldPath: String) {
     baseColorFactor?.shouldHaveSize(COLOR_SIZE, "$fieldPath.baseColorFactor")
+    baseColorTexture?.validate("$fieldPath.baseColorTexture")
     metallicFactor?.toDouble()?.shouldBeInRange(METALLIC_FACTOR_RANGE, "$fieldPath.metallicFactor")
     roughnessFactor?.toDouble()?.shouldBeInRange(ROUGHNESS_FACTOR_RANGE, "$fieldPath.roughnessFactor")
+    metallicRoughnessTexture?.validate("$fieldPath.metallicRoughnessTexture")
 }
 
 private fun MaterialRaw.validate(index: Int) {
