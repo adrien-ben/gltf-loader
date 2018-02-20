@@ -22,6 +22,17 @@ class ValidationTest {
                             ))))
 
     @Test
+    fun itShouldValidateBuffer() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        buffers = listOf(BufferRaw(
+                                byteLength = 1
+                        )))))
+    }
+
+    @Test
     fun itShouldFailOnWrongBufferByteLength() = itShouldFailToValidate(
             failingField = "buffers[0].byteLength",
             gltfRaw = GltfRaw(
