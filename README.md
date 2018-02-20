@@ -1,7 +1,8 @@
 # gltf-loader
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0537889cdb547189543b986a1adfbfc)](https://www.codacy.com/app/adrien.bennadji/gltf-loader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=adrien-ben/gltf-loader&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/adrien-ben/gltf-loader.svg?branch=master)](https://travis-ci.org/adrien-ben/gltf-loader)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0537889cdb547189543b986a1adfbfc)](https://www.codacy.com/app/adrien.bennadji/gltf-loader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=adrien-ben/gltf-loader&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/a0537889cdb547189543b986a1adfbfc)](https://www.codacy.com/app/adrien.bennadji/gltf-loader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=adrien-ben/gltf-loader&amp;utm_campaign=Badge_Coverage)
 
 Loader for [glTF2.0](https://github.com/KhronosGroup/glTF) files written in kotlin. 
 The project uses [Klaxon](https://github.com/cbeust/klaxon) to parse JSON.
