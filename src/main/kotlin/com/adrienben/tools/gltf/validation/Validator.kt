@@ -90,6 +90,7 @@ internal class Validator {
             skins?.shouldNotBeEmpty("skins")?.forEachIndexed { index, it -> it.validate(index) }
             animations?.shouldNotBeEmpty("animations")?.forEachIndexed { index, it -> it.validate(index) }
             scenes?.shouldNotBeEmpty("scenes")?.forEachIndexed { index, it -> it.validate(index) }
+            scene?.shouldBeAValidRef("scene")
         }
         return gltfRaw
     }
@@ -133,8 +134,8 @@ private fun AccessorRaw.validate(index: Int) {
     componentType.shouldBeOneOf(ACCESSOR_COMPONENT_TYPES, "$path.componentType")
     count.shouldBeAtLeast(ACCESSOR_MIN_COUNT, "$path.count")
     type.shouldBeOneOf(ACCESSOR_TYPES, "$path.type")
-    max?.size?.shouldBeOneOf(ACCESSOR_MIN_MAX_SIZES, "$path.max.size")
-    min?.size?.shouldBeOneOf(ACCESSOR_MIN_MAX_SIZES, "$path.min.size")
+    max?.size?.shouldBeOneOf(ACCESSOR_MIN_MAX_SIZES, "$path.max")
+    min?.size?.shouldBeOneOf(ACCESSOR_MIN_MAX_SIZES, "$path.min")
     sparse?.validate("$path.sparse")
 }
 
