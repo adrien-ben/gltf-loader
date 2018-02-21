@@ -17,16 +17,21 @@ interface Matcher<in T> {
 class Result(val success: Boolean, val message: String)
 
 /**
+ * Exception thrown in case of validation error.
+ */
+class ValidationError(val field: String, message: String) : Throwable("$field $message")
+
+/**
  * Infix extension that checks the receiver against [matcher].
  *
  * [fieldName] will be append at the beginning of the error message
  * int case of failure.
  *
- * @throws AssertionError if the test does not pass.
+ * @throws ValidationError if the test does not pass.
  */
 fun <T> T.should(matcher: Matcher<T>, fieldName: String = "field") = this.apply {
     val result = matcher.matches(this)
-    if (!result.success) throw AssertionError("$fieldName is $this but should ${result.message}")
+    if (!result.success) throw ValidationError(fieldName, "is $this but should ${result.message}")
 }
 
 /**

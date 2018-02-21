@@ -2,7 +2,7 @@ package com.adrienben.tools.gltf.validation
 
 import com.adrienben.tools.gltf.models.*
 import org.junit.Test
-import kotlin.test.fail
+import kotlin.test.assertFailsWith
 
 /**
  * Test class for [Validator]
@@ -52,6 +52,21 @@ class ValidationTest {
                             asset = validAsset,
                             buffers = emptyList() // tested error
                     )))
+
+    @Test
+    fun itShouldValidateBufferView() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        bufferViews = listOf(BufferViewRaw(
+                                buffer = 0,
+                                byteOffset = 0,
+                                byteLength = 1,
+                                byteStride = 4,
+                                target = 34962
+                        )))))
+    }
 
     @Test
     fun itShouldFailOnWrongBufferViewBufferRef() = itShouldFailToValidate(
@@ -125,6 +140,33 @@ class ValidationTest {
                             asset = validAsset,
                             bufferViews = emptyList() // tested error
                     )))
+
+    @Test
+    fun itShouldValidateAccessor() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        accessors = listOf(AccessorRaw(
+                                bufferView = 0,
+                                byteOffset = 0,
+                                componentType = 5120,
+                                count = 1,
+                                type = "SCALAR",
+                                max = listOf(1),
+                                min = listOf(1),
+                                sparse = SparseRaw(
+                                        count = 1,
+                                        indices = IndicesRaw(
+                                                bufferView = 0,
+                                                byteOffset = 0,
+                                                componentType = 5121
+                                        ),
+                                        values = ValuesRaw(
+                                                bufferView = 0,
+                                                byteOffset = 0
+                                        )))))))
+    }
 
     @Test
     fun itShouldFailOnWrongIndicesBufferViewRef() = itShouldFailToValidate(
@@ -361,6 +403,20 @@ class ValidationTest {
                     )))
 
     @Test
+    fun itShouldValidateSampler() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        samplers = listOf(SamplerRaw(
+                                magFilter = 9728,
+                                minFilter = 9728,
+                                wrapS = 10497,
+                                wrapT = 10497
+                        )))))
+    }
+
+    @Test
     fun itShouldFailOnWrongSamplerMagFilter() = itShouldFailToValidate(
             failingField = "samplers[0].magFilter",
             gltfRaw = GltfRaw(
@@ -415,6 +471,18 @@ class ValidationTest {
                     )))
 
     @Test
+    fun itShouldValidateImage() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        images = listOf(ImageRaw(
+                                mimeType = "image/png",
+                                bufferView = 0
+                        )))))
+    }
+
+    @Test
     fun itShouldFailOnWrongImageMimeType() = itShouldFailToValidate(
             failingField = "images[0].mimeType",
             gltfRaw = GltfRaw(
@@ -447,6 +515,18 @@ class ValidationTest {
                     )))
 
     @Test
+    fun itShouldValidateTexture() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        textures = listOf(TextureRaw(
+                                sampler = 0,
+                                source = 0
+                        )))))
+    }
+
+    @Test
     fun itShouldFailOnWrongTextureSamplerRef() = itShouldFailToValidate(
             failingField = "textures[0].sampler",
             gltfRaw = GltfRaw(
@@ -477,6 +557,45 @@ class ValidationTest {
                             asset = validAsset,
                             textures = emptyList() // tested error
                     )))
+
+    @Test
+    fun itShouldValidateMaterial() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        materials = listOf(MaterialRaw(
+                                pbrMetallicRoughness = PbrMetallicRoughnessRaw(
+                                        baseColorFactor = listOf(1.0, 1.0, 1.0, 1.0),
+                                        baseColorTexture = TextureInfoRaw(
+                                                index = 0,
+                                                texCoord = 0
+                                        ),
+                                        metallicFactor = 0.0,
+                                        roughnessFactor = 1.0,
+                                        metallicRoughnessTexture = TextureInfoRaw(
+                                                index = 1,
+                                                texCoord = 0
+                                        )
+                                ),
+                                normalTexture = NormalTextureInfoRaw(
+                                        index = 2,
+                                        texCoord = 0
+                                ),
+                                occlusionTexture = OcclusionTextureInfoRaw(
+                                        index = 3,
+                                        texCoord = 0,
+                                        strength = 1.0
+                                ),
+                                emissiveTexture = TextureInfoRaw(
+                                        index = 4,
+                                        texCoord = 0
+                                ),
+                                emissiveFactor = listOf(1.0, 1.0, 1.0),
+                                alphaMode = "OPAQUE",
+                                alphaCutoff = 0.5
+                        )))))
+    }
 
     @Test
     fun itShouldFailOnWrongMaterialPbrColor() = itShouldFailToValidate(
@@ -704,6 +823,26 @@ class ValidationTest {
                     )))
 
     @Test
+    fun itShouldValidateMesh() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        meshes = listOf(MeshRaw(
+                                primitives = listOf(PrimitiveRaw(
+                                        attributes = mapOf("POSITION" to 0),
+                                        indices = 1,
+                                        material = 0,
+                                        mode = 4,
+                                        targets = listOf(
+                                                mapOf("POSITION" to 2)
+                                        )
+                                )),
+                                weights = listOf(1)
+                        )))))
+    }
+
+    @Test
     fun itShouldFailOnEmptyMeshPrimitiveAttributes() = itShouldFailToValidate(
             failingField = "meshes[0].primitives[0].attributes",
             gltfRaw = GltfRaw(
@@ -817,6 +956,40 @@ class ValidationTest {
                     )))
 
     @Test
+    fun itShouldValidateOrthographicCamera() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        cameras = listOf(CameraRaw(
+                                orthographic = OrthographicRaw(
+                                        xmag = 1,
+                                        ymag = 1,
+                                        zfar = 10,
+                                        znear = 0
+                                ),
+                                type = "orthographic"
+                        )))))
+    }
+
+    @Test
+    fun itShouldValidatePerspectiveCamera() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        cameras = listOf(CameraRaw(
+                                perspective = PerspectiveRaw(
+                                        aspectRatio = 1.77,
+                                        yfov = 0.7,
+                                        zfar = 100,
+                                        znear = 0.1
+                                ),
+                                type = "perspective"
+                        )))))
+    }
+
+    @Test
     fun itShouldFailOnWrongOrthographicZFar() = itShouldFailToValidate(
             failingField = "cameras[0].orthographic.zfar",
             gltfRaw = GltfRaw(
@@ -928,6 +1101,25 @@ class ValidationTest {
                     )))
 
     @Test
+    fun itShouldValidateNode() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        nodes = listOf(NodeRaw(
+                                camera = 0,
+                                children = listOf(1),
+                                skin = 0,
+                                matrix = listOf(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1),
+                                mesh = 0,
+                                rotation = listOf(0, 1, 0, 0),
+                                scale = listOf(1, 1, 1),
+                                translation = listOf(0, 0, 0),
+                                weights = listOf(1)
+                        )))))
+    }
+
+    @Test
     fun itShouldFailOnWrongNodeCameraRef() = itShouldFailToValidate(
             failingField = "nodes[0].camera",
             gltfRaw = GltfRaw(
@@ -1037,6 +1229,19 @@ class ValidationTest {
                     )))
 
     @Test
+    fun itShouldValidateSkin() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        skins = listOf(SkinRaw(
+                                inverseBindMatrices = 0,
+                                skeleton = 1,
+                                joints = listOf(0)
+                        )))))
+    }
+
+    @Test
     fun itShouldFailOnWrongSkinMatricesRef() = itShouldFailToValidate(
             failingField = "skins[0].inverseBindMatrices",
             gltfRaw = GltfRaw(
@@ -1091,6 +1296,28 @@ class ValidationTest {
                             asset = validAsset,
                             skins = emptyList() // tested error
                     )))
+
+    @Test
+    fun itShouldValidateAnimation() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        animations = listOf(AnimationRaw(
+                                channels = listOf(ChannelRaw(
+                                        sampler = 0,
+                                        target = AnimationTargetRaw(
+                                                node = 0,
+                                                path = "translation"
+                                        )
+                                )),
+                                samplers = listOf(AnimationSamplerRaw(
+                                        input = 0,
+                                        interpolation = "LINEAR",
+                                        output = 1
+                                ))
+                        )))))
+    }
 
     @Test
     fun itShouldFailOnWrongAnimationTargetNodeRef() = itShouldFailToValidate(
@@ -1249,6 +1476,19 @@ class ValidationTest {
                     )))
 
     @Test
+    fun itShouldValidateScene() {
+        Validator().validate(GltfRaw(
+                data = emptyList(),
+                gltfAssetRaw = GltfAssetRaw(
+                        asset = validAsset,
+                        scenes = listOf(SceneRaw(
+                                nodes = listOf(0)
+                        )),
+                        scene = 0
+                )))
+    }
+
+    @Test
     fun itShouldFailOnEmptySceneNodes() = itShouldFailToValidate(
             failingField = "scenes[0].nodes",
             gltfRaw = GltfRaw(
@@ -1290,12 +1530,12 @@ class ValidationTest {
                             scene = -1 // tested error
                     )))
 
-    private fun itShouldFailToValidate(gltfRaw: GltfRaw, failingField: String) = try {
-        Validator().validate(gltfRaw)
-        fail("Validation should have failed on field $failingField but passed")
-    } catch (e: AssertionError) {
-        assert(e.message?.startsWith("$failingField ") ?: false) {
-            "Validation should have failed on field $failingField but failed for other reasons : ${e.message}"
+    private fun itShouldFailToValidate(gltfRaw: GltfRaw, failingField: String) {
+        val error = assertFailsWith(ValidationError::class) {
+            Validator().validate(gltfRaw)
+        }
+        assert(error.field == failingField) {
+            "Validation should have failed on field $failingField but failed because ${error.message}"
         }
     }
 }

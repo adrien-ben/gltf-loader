@@ -72,7 +72,7 @@ internal class Validator {
     /**
      * Validate the provided asset.
      *
-     * @throws AssertionError if the asset is not valid.
+     * @throws ValidationError if the asset is not valid.
      */
     fun validate(gltfRaw: GltfRaw): GltfRaw {
         gltfRaw.gltfAssetRaw.apply {
