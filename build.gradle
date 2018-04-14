@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlin_version = '1.2.21'
+        kotlin_version = '1.2.31'
     }
 
     repositories {
@@ -12,8 +12,8 @@ buildscript {
     }
 }
 
-group 'com.adrienben.tools'
-version '1.0.0-SNAPSHOT'
+group = 'com.adrienben.tools'
+version = '1.0.0-SNAPSHOT'
 
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
