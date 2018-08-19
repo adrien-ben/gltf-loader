@@ -32,6 +32,63 @@ class GltfQuaternion(val i: Float = 0f, val j: Float = 0f, val k: Float = 0f, va
     internal companion object Factory {
 
         /**
+         * Construct a quaternion from a matrix by first normalizing the rotation part and then extracting the quaternion.
+         */
+        fun fromMatrix(matrix: GltfMat4): GltfQuaternion {
+            return matrix.run {
+                var nm00 = m00
+                var nm01 = m01
+                var nm02 = m02
+                var nm10 = m10
+                var nm11 = m11
+                var nm12 = m12
+                var nm20 = m20
+                var nm21 = m21
+                var nm22 = m22
+                val lenX = (1.0 / Math.sqrt((m00 * m00 + m01 * m01 + m02 * m02).toDouble())).toFloat()
+                val lenY = (1.0 / Math.sqrt((m10 * m10 + m11 * m11 + m12 * m12).toDouble())).toFloat()
+                val lenZ = (1.0 / Math.sqrt((m20 * m20 + m21 * m21 + m22 * m22).toDouble())).toFloat()
+                nm00 *= lenX; nm01 *= lenX; nm02 *= lenX
+                nm10 *= lenY; nm11 *= lenY; nm12 *= lenY
+                nm20 *= lenZ; nm21 *= lenZ; nm22 *= lenZ
+                fromNormalizedMatrix(nm00, nm01, nm02, nm10, nm11, nm12, nm20, nm21, nm22)
+            }
+        }
+
+        /**
+         * Construct a quaternion from a the rotation part of a 4x4 matrix.
+         */
+        fun fromNormalizedMatrix(m00: Float, m01: Float, m02: Float, m10: Float, m11: Float, m12: Float, m20: Float, m21: Float, m22: Float): GltfQuaternion {
+            val tr = m00 + m11 + m22
+            return when {
+                tr > 0f -> {
+                    var t = Math.sqrt((tr + 1.0f).toDouble()).toFloat()
+                    val w = t * 0.5f
+                    t = 0.5f / t
+                    GltfQuaternion((m12 - m21) * t, (m20 - m02) * t, (m01 - m10) * t, w)
+                }
+                (m00 >= m11 && m00 >= m22) -> {
+                    var t = Math.sqrt(m00 - (m11 + m22) + 1.0).toFloat()
+                    val x = t * 0.5f
+                    t = 0.5f / t
+                    GltfQuaternion(x, (m10 + m01) * t, (m02 + m20) * t, (m12 - m21) * t)
+                }
+                m11 > m22 -> {
+                    var t = Math.sqrt(m11 - (m22 + m00) + 1.0).toFloat()
+                    val y = t * 0.5f
+                    t = 0.5f / t
+                    GltfQuaternion((m10 + m01) * t, y, (m21 + m12) * t, (m20 - m02) * t)
+                }
+                else -> {
+                    var t = Math.sqrt(m22 - (m00 + m11) + 1.0).toFloat()
+                    val z = t * 0.5f
+                    t = 0.5f / t
+                    GltfQuaternion((m02 + m20) * t, (m21 + m12) * t, z, (m01 - m10) * t)
+                }
+            }
+        }
+
+        /**
          * Generate a quaternion from a list of [Number]s. The list must contain 4 elements
          */
         fun fromNumbers(numbers: List<Number>): GltfQuaternion {
@@ -59,27 +116,7 @@ class GltfMat4(
     /**
      * Extract the rotation from this matrix.
      */
-    internal fun rotation(): GltfQuaternion {
-        val trace = m00 + m11 + m22
-        return when {
-            trace > 0f -> {
-                val s = sqrt(trace + 1f) * 2f
-                GltfQuaternion((m21 - m12) / s, (m02 - m20) / s, (m10 - m01) / s, 0.25f * s)
-            }
-            (m00 > m11) and (m00 > m22) -> {
-                val s = sqrt(1f + m00 - m11 - m22) * 2f
-                GltfQuaternion(0.25f * s, (m01 + m10) / s, (m02 + m20) / s, (m21 - m12) / s)
-            }
-            m11 > m22 -> {
-                val s = sqrt(1f + m11 - m00 - m22) * 2f
-                GltfQuaternion((m01 + m10) / s, 0.25f * s, (m12 + m21) / s, (m02 - m20) / s)
-            }
-            else -> {
-                val s = sqrt(1f + m22 - m00 - m11) * 2f
-                GltfQuaternion((m02 + m20) / s, (m12 + m21) / s, 0.25f * s, (m10 - m01) / s)
-            }
-        }
-    }
+    internal fun rotation() = GltfQuaternion.fromMatrix(this)
 
     /**
      * Extract the scale from this matrix.

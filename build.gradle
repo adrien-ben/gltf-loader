@@ -15,7 +15,7 @@ plugins {
 }
 
 group = 'com.adrienben.tools'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.1-SNAPSHOT'
 
 ext {
     klaxon_version = "3.0.1"
