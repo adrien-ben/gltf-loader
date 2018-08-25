@@ -4,18 +4,18 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.31"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.61"
     }
 }
 
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.31"
+    id "org.jetbrains.kotlin.jvm" version "1.2.61"
     id 'maven-publish'
     id 'jacoco'
 }
 
 group = 'com.adrienben.tools'
-version = '1.0.1-SNAPSHOT'
+version = '1.0.2-SNAPSHOT'
 
 ext {
     klaxon_version = "3.0.1"
