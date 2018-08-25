@@ -2,7 +2,7 @@ package com.adrienben.tools.gltf
 
 import java.util.*
 
-private val DATA_URI_REGEX = Regex("models:.*(?:;base64)?,(.*)")
+private val DATA_URI_REGEX = Regex("data:.*(?:;base64)?,(.*)")
 
 /**
  * String extensions to decode a models URI if it matches the models uri pattern.
