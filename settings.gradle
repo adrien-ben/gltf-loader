@@ -1,1 +1,2 @@
 rootProject.name = 'gltf-loader'
+enableFeaturePreview('STABLE_PUBLISHING')
