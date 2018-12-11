@@ -1,0 +1,22 @@
+{
+  "package": {
+    "name": "gltf-loader",
+    "repo": "default",
+    "subject": "adrien-ben",
+    "desc": "I was pushed completely automatically",
+    "vcs_url": "https://github.com/adrien-ben/gltf-loader.git",
+    "licenses": [
+      "MIT"
+    ]
+  },
+  "version": {
+    "name": "1.0.2"
+  },
+  "files": [
+    {
+      "includePattern": "build/libs/(.*)",
+      "uploadPattern": "/$1"
+    }
+  ],
+  "publish": true
+}

@@ -12,6 +12,9 @@ before_install:
 after_success:
   - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Kotlin -r build/reports/jacoco/test/jacocoTestReport.xml
 
-env:
-  global:
-    - secure: HyhHEHcrzs6DLY99wPpvHhBwhA6sDdBIEy8JljnTEtCoQPjSXWwpnhLlYrd6lLCOCyBEplFiBwDOu0DLp0HT24gTPvBtpCibxPQT8kVP/sJGAflfAygcoUgFbKI8LuYFuB+eFZSrhZcQxhP2n57Iit4dD3uQCsDrJbmoWUCuTtwVZA1z9qaBmJwbrQPq+CS3lx7sQ0R91TCVuIn2ZMlGHNGON86JXpr/2e9ippkwp4o3UBuwranIG9FKk+tzvuZ28dsFUYjBM0IyeMsiQfi/uvVOhrJ/ontkEuF+HXr4pvRg3qhBXeinC3UTSc3CuQc8PCPwF1LhY3RZtyNqDi5duNajfMSu5X+eluefmNrxlWMYQuxiidcC7nU94QYfR6K+Gz3vbcGY5VEyz4bKfVJRUIH8ppAzqA8aILfeMO7uGx4CYmf9uy8EIieWiaf2RZcO1CH24Pbtzo9JYM8mI0G5xg1mRmxwM7vhLS21MTYLbuFt7XIykLaybLaZ53kDLGMkwzBWa8IwfW9kTgkj1yrRzTFEMSZFIEqzebu6SIuzGDsp/aZvXO0PNxt2r/4lXQDxRHCNp20A57vibkewq7FQIEHDLBSSL/GQojluJ+TU0bxxiEz+6JGtPn7S1kMG10/ecGZC9DVxCHU2i7UPzjXHnFE15D70hYmTGGe1UO5u6Bw=
+deploy:
+  provider: bintray
+  file: bintray.json
+  user: adrien-ben
+  key: ead3c285ced6b80f33c660162f521a1578d0bfb4
+  skip_cleanup: true
