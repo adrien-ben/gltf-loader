@@ -3,7 +3,7 @@
     "name": "gltf-loader",
     "repo": "default",
     "subject": "adrien-ben",
-    "desc": "I was pushed completely automatically",
+    "desc": "GLTF2 file loader",
     "vcs_url": "https://github.com/adrien-ben/gltf-loader.git",
     "licenses": [
       "MIT"

@@ -17,25 +17,20 @@ plugins {
 group = 'com.adrienben.tools'
 version = '1.0.3'
 
-ext {
-    klaxon_version = "3.0.1"
-    junit_version = "4.12"
-}
-
 repositories {
     jcenter()
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "com.beust:klaxon:$klaxon_version"
+    implementation "com.beust:klaxon:4.0.2"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit"
-    testImplementation "junit:junit:$junit_version"
+    testImplementation "junit:junit:4.12"
 }
 
 jacoco {
-    toolVersion = "0.8.0"
+    toolVersion = "0.8.2"
 }
 
 jacocoTestReport {
