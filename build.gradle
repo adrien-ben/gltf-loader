@@ -53,5 +53,8 @@ publishing {
     }
     repositories {
         mavenLocal()
+        maven {
+            url = "$buildDir/repository"
+        }
     }
 }

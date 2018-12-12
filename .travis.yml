@@ -12,6 +12,9 @@ before_install:
 after_success:
   - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Kotlin -r build/reports/jacoco/test/jacocoTestReport.xml
 
+before_deploy:
+  - ./gradlew publishMavenJavaPublicationToMavenRepository
+
 deploy:
   provider: bintray
   file: bintray.json

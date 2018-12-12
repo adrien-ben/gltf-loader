@@ -14,7 +14,7 @@
   },
   "files": [
     {
-      "includePattern": "build/libs/(.*)",
+      "includePattern": "build/repository/(.*)",
       "uploadPattern": "/$1"
     }
   ],
