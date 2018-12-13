@@ -1,6 +1,7 @@
 # gltf-loader
 
 [![Build Status](https://travis-ci.org/adrien-ben/gltf-loader.svg?branch=develop)](https://travis-ci.org/adrien-ben/gltf-loader)
+[ ![Download](https://api.bintray.com/packages/adrien-ben/default/gltf-loader/images/download.svg) ](https://bintray.com/adrien-ben/default/gltf-loader/_latestVersion)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0537889cdb547189543b986a1adfbfc)](https://www.codacy.com/app/adrien.bennadji/gltf-loader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=adrien-ben/gltf-loader&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/a0537889cdb547189543b986a1adfbfc)](https://www.codacy.com/app/adrien.bennadji/gltf-loader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=adrien-ben/gltf-loader&amp;utm_campaign=Badge_Coverage)
 
